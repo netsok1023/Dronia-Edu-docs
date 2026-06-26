@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나만의 자동 증시 브리핑 구축 가이드</title>
+    <style>
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        h1 {
+            color: #1a73e8;
+            font-size: 28px;
+            border-bottom: 2px solid #e8eaed;
+            padding-bottom: 15px;
+            margin-top: 0;
+            text-align: center;
+        }
+        .intro {
+            font-size: 16px;
+            color: #5f6368;
+            text-align: center;
+            margin-bottom: 40px;
+            word-break: keep-all;
+        }
+        h2 {
+            color: #202124;
+            font-size: 20px;
+            margin-top: 40px;
+            background-color: #e8f0fe;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border-left: 5px solid #1a73e8;
+        }
+        ol {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        .warning {
+            background-color: #fef7e0;
+            border-left: 4px solid #fbbc04;
+            padding: 12px 15px;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #b06000;
+            border-radius: 4px;
+        }
+        pre {
+            background-color: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #d93025;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #80868b;
+            border-top: 1px solid #e8eaed;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🚀 나만의 자동 증시 브리핑 구축 가이드</h1>
+        <p class="intro">
+            구글 앱스 스크립트(Google Apps Script)를 활용해 매일 아침 내 메일함으로 증시 브리핑을 꽂아주는 자동화 시스템 구축 방법을 안내해 드립니다.<br>
+            복잡한 프로그램 설치 없이 구글 계정만 있으면 웹에서 바로 세팅할 수 있습니다. 아래 4단계 가이드에 따라 복사하고 붙여넣기만 하시면 됩니다!
+        </p>
+
+        <h2>1단계: 구글 앱스 스크립트 열기</h2>
+        <ol>
+            <li>크롬 브라우저에서 구글 계정으로 로그인합니다.</li>
+            <li><strong>Google Apps Script</strong> 홈페이지에 접속합니다.</li>
+            <li>화면 왼쪽 상단의 <strong>[+ 새 프로젝트]</strong> 버튼을 클릭합니다.</li>
+            <li>편집기 창이 열리면, 기본으로 적혀있는 <code>function myFunction() { ... }</code> 코드를 모두 지워줍니다.</li>
+        </ol>
+
+        <h2>2단계: 자동화 코드 붙여넣기</h2>
+        <p>아래 제공해 드리는 코드를 복사해서 빈 편집기 창에 그대로 붙여넣습니다.</p>
+        <div class="warning">
+            <strong>주의:</strong> 코드 맨 위쪽 <code>recipient</code> 변수에 본인이 메일을 받을 실제 이메일 주소로 꼭 변경해 주세요!
+        </div>
+        
+<pre><code>function sendAutomatedMarketBriefing() {
+  // 1. 메일을 받을 주소를 입력하세요.
+  var recipient = "본인메일주소@gmail.com"; 
+  
+  // 오늘 날짜 구하기
+  var today = new Date();
+  var dateString = Utilities.formatDate(today, "Asia/Seoul", "yyyy년 MM월 dd일");
+  var subject = "📊 오늘의 증시 브리핑 (" + dateString + ")";
+
+  // 2. 야후 파이낸스 실측 데이터 가져오기 (yfinance 대체)
+  function getStockData(ticker) {
+    var encodedTicker = encodeURIComponent(ticker);
+    var url = "https://query1.finance.yahoo.com/v8/finance/chart/" + encodedTicker + "?range=5d&interval=1d";
+    var options = { muteHttpExceptions: true, headers: { "User-Agent": "Mozilla/5.0" } };
+
+    try {
+      var response = UrlFetchApp.fetch(url, options);
+      var data = JSON.parse(response.getContentText());
+      if (!data.chart || !data.chart.result) return { close: "확인 필요", change: "0.00" };
+
+      var closes = data.chart.result[0].indicators.quote[0].close;
+      var validCloses = closes.filter(function(val) { return val !== null; });
+      var latestClose = validCloses[validCloses.length - 1];
+      var prevClose = validCloses[validCloses.length - 2];
+      var pctChange = ((latestClose - prevClose) / prevClose) * 100;
+
+      var isKorean = ticker.indexOf(".KS") !== -1 || ticker.indexOf(".KQ") !== -1 || ticker.indexOf("^KS") !== -1 || ticker.indexOf("^KQ") !== -1;
+      var formattedClose = isKorean ? Math.round(latestClose).toLocaleString('ko-KR') : latestClose.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+      return { close: formattedClose, change: pctChange.toFixed(2) };
+    } catch(e) {
+      return { close: "오류", change: "0.00" };
+    }
+  }
+
+  // 3. 구글 뉴스 RSS 자동 수집 (시장을 움직인 이슈 대체용)
+  function getTopNews() {
+    var rssUrl = "https://news.google.com/rss/search?q=증시+경제&hl=ko&gl=KR&ceid=KR:ko";
+    try {
+      var response = UrlFetchApp.fetch(rssUrl);
+      var document = XmlService.parse(response.getContentText());
+      var items = document.getRootElement().getChild('channel').getChildren('item');
+      var newsHtml = "";
+      for (var i = 0; i &lt; 3 &amp;&amp; i &lt; items.length; i++) {
+        var title = items[i].getChild('title').getText();
+        var link = items[i].getChild('link').getText();
+        newsHtml += "&lt;li style='margin-bottom:10px;'&gt;&lt;a href='" + link + "' style='color:#2563eb; text-decoration:none; font-weight:bold;'&gt;" + title + "&lt;/a&gt;&lt;/li&gt;";
+      }
+      return newsHtml;
+    } catch(e) {
+      return "&lt;li&gt;뉴스 데이터를 불러올 수 없습니다.&lt;/li&gt;";
+    }
+  }
+
+  // 4. 종목 리스트 설정
+  var indices = [
+    {name: "S&P 500", ticker: "^GSPC"}, {name: "나스닥", ticker: "^IXIC"}, {name: "다우존스", ticker: "^DJI"},
+    {name: "코스피", ticker: "^KS11"}, {name: "코스닥", ticker: "^KQ11"}
+  ];
+  var krStocks = [
+    {name: "삼성전자", ticker: "005930.KS"}, {name: "SK하이닉스", ticker: "000660.KS"},
+    {name: "현대차", ticker: "005380.KS"}, {name: "LG에너지솔루션", ticker: "373220.KS"}, {name: "두산에너빌리티", ticker: "034020.KS"}
+  ];
+  var usStocks = [
+    {name: "엔비디아", ticker: "NVDA"}, {name: "애플", ticker: "AAPL"}, {name: "테슬라", ticker: "TSLA"},
+    {name: "마이크로소프트", ticker: "MSFT"}, {name: "엑슨모빌", ticker: "XOM"}
+  ];
+
+  // 5. HTML 본문 조립 (반응형 및 디자인 적용)
+  var html = "&lt;div style='font-family: sans-serif; max-width: 800px; margin: auto; background-color: #f4f6f9; padding: 20px;'&gt;";
+  html += "&lt;div style='background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; padding: 30px; border-radius: 12px 12px 0 0; text-align: center;'&gt;";
+  html += "&lt;h1 style='margin:0;'&gt;오늘의 증시 브리핑&lt;/h1&gt;&lt;p style='margin-top:10px;'&gt;기준일: " + dateString + " (Yahoo Finance 실측)&lt;/p&gt;&lt;/div&gt;";
+  html += "&lt;div style='background: #fff; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);'&gt;";
+
+  function buildTable(title, list) {
+    var tableHtml = "&lt;h2 style='color:#1e3c72; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;'&gt;" + title + "&lt;/h2&gt;";
+    tableHtml += "&lt;div style='overflow-x:auto;'&gt;&lt;table style='width: 100%; border-collapse: collapse; margin-bottom: 30px; text-align: left;'&gt;";
+    tableHtml += "&lt;tr style='background-color:#f8fafc; color:#64748b;'&gt;&lt;th style='padding:12px; border-bottom:1px solid #e2e8f0;'&gt;종목명&lt;/th&gt;&lt;th style='padding:12px; border-bottom:1px solid #e2e8f0;'&gt;종가&lt;/th&gt;&lt;th style='padding:12px; border-bottom:1px solid #e2e8f0;'&gt;등락률(%)&lt;/th&gt;&lt;/tr&gt;";
+    
+    for (var i = 0; i &lt; list.length; i++) {
+      var data = getStockData(list[i].ticker);
+      var color = data.change &gt; 0 ? "color: #e11d48;" : (data.change &lt; 0 ? "color: #2563eb;" : "color: #333;");
+      var sign = data.change &gt; 0 ? "▲ +" : (data.change &lt; 0 ? "▼ " : "");
+      var isKr = list[i].ticker.indexOf(".KS") !== -1 || list[i].ticker.indexOf(".KQ") !== -1 || list[i].ticker.indexOf("^K") !== -1;
+      var prefix = isKr ? "" : "$ ";
+      var suffix = isKr ? " 원" : "";
+      
+      tableHtml += "&lt;tr&gt;";
+      tableHtml += "&lt;td style='padding:12px; border-bottom:1px solid #e2e8f0; font-weight:bold;'&gt;" + list[i].name + " &lt;span style='font-size:10px; color:#94a3b8; font-weight:normal;'&gt;" + list[i].ticker + "&lt;/span&gt;&lt;/td&gt;";
+      tableHtml += "&lt;td style='padding:12px; border-bottom:1px solid #e2e8f0;'&gt;" + prefix + data.close + suffix + "&lt;/td&gt;";
+      tableHtml += "&lt;td style='padding:12px; border-bottom:1px solid #e2e8f0; font-weight:bold; " + color + "'&gt;" + sign + data.change + "%&lt;/td&gt;";
+      tableHtml += "&lt;/tr&gt;";
+    }
+    tableHtml += "&lt;/table&gt;&lt;/div&gt;";
+    return tableHtml;
+  }
+
+  html += buildTable("📊 주요 지수 현황", indices);
+  html += buildTable("🇰🇷 국내 관심 종목", krStocks);
+  html += buildTable("🇺🇸 미국 관심 종목", usStocks);
+
+  html += "&lt;h2 style='color:#1e3c72; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;'&gt;📰 오늘의 증시 주요 뉴스 (자동 수집)&lt;/h2&gt;";
+  html += "&lt;ul style='padding-left: 20px; line-height: 1.6;'&gt;" + getTopNews() + "&lt;/ul&gt;";
+
+  html += "&lt;div style='margin-top:40px; padding:20px; background:#f8fafc; text-align:center; font-size:12px; color:#64748b; border-radius:8px;'&gt;";
+  html += "&lt;strong&gt;※ 이 자료는 스크립트를 통한 정보 자동 정리이며, 투자 판단·책임은 본인에게 있습니다.&lt;/strong&gt;&lt;/div&gt;";
+  html += "&lt;/div&gt;&lt;/div&gt;";
+
+  // 6. 이메일 발송
+  MailApp.sendEmail({ to: recipient, subject: subject, htmlBody: html });
+}</code></pre>
+
+        <h2>3단계: 권한 허용 및 테스트 발송</h2>
+        <ol>
+            <li>코드 편집기 상단의 <strong>[💾 저장(플로피 디스크 아이콘)]</strong> 버튼을 누릅니다. (프로젝트 이름은 '증시 브리핑 자동화' 등으로 지어주세요.)</li>
+            <li>상단 메뉴에서 <strong>[▷ 실행]</strong> 버튼을 누릅니다.</li>
+            <li>처음 실행할 때는 '권한 검토' 팝업이 뜹니다.</li>
+            <li><code>권한 검토</code> 클릭 ➔ 구글 계정 선택 ➔ <code>고급</code> 클릭 ➔ <code>(안전하지 않음) 프로젝트로 이동</code> 클릭 ➔ <span class="highlight">허용</span>을 누릅니다.</li>
+            <li>실행이 완료되면, 본인의 메일함으로 들어가 브리핑 메일이 정상적으로 도착했는지 확인합니다.</li>
+        </ol>
+
+        <h2>4단계: 매일 아침 '자동 발송' 예약하기 (트리거 설정)</h2>
+        <p>매일 직접 실행 버튼을 누를 필요 없이, 정해진 시간에 알아서 메일을 보내도록 시계(트리거)를 달아줄 차례입니다.</p>
+        <ol>
+            <li>화면 왼쪽 메뉴에서 <strong>[⏰ 트리거(시계 아이콘)]</strong> 탭을 클릭합니다.</li>
+            <li>오른쪽 하단의 파란색 <strong>[+ 트리거 추가]</strong> 버튼을 누릅니다.</li>
+            <li>나타나는 설정 창을 아래와 같이 맞춥니다.
+                <ul>
+                    <li>실행할 함수 선택: <strong>sendAutomatedMarketBriefing</strong></li>
+                    <li>실행할 배포 선택: <strong>Head</strong></li>
+                    <li>이벤트 소스 선택: <strong>시간 기반</strong></li>
+                    <li>시간 기반 트리거의 유형 선택: <strong>일 단위 타이머</strong></li>
+                    <li>시간대 선택: <strong>메일을 받고 싶은 시간대 선택</strong> (예: 오전 7시 ~ 8시)</li>
+                </ul>
+            </li>
+            <li><strong>[저장]</strong>을 누릅니다.</li>
+        </ol>
+
+        <div class="footer">
+            <p>🎉 이제 설정이 모두 끝났습니다! 컴퓨터가 꺼져 있어도, 핸드폰만 켜져 있으면 구글 서버가 매일 아침 최신 데이터를 수집하여 입력하신 메일함으로 예쁜 표를 보내드릴 것입니다.</p>
+        </div>
+    </div>
+
+</body>
+</html>
