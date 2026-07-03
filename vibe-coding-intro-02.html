@@ -57,7 +57,7 @@
   .gcard .ic{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:rgba(246,168,50,.10);border:1px solid rgba(246,168,50,.26);margin-bottom:16px}
   .gcard .ic svg{width:30px;height:30px}
   /* 2 도입 · 좌 STEP 도식 + 우 함축 이미지 */
-  .s-split{flex-direction:row;align-items:center;gap:44px}
+  .s-split{flex-direction:row;align-items:stretch;gap:44px}
   .s-split .left{flex:1;display:flex;flex-direction:column}
   .s-split .right{flex:1;height:100%;display:flex;align-items:center;justify-content:center}
   .stepflow{display:flex;flex-direction:column;gap:12px;margin-top:24px}
@@ -116,8 +116,8 @@
   .gcard li::before{content:"";position:absolute;left:0;top:8px;width:8px;height:8px;border-radius:3px;background:var(--gold);opacity:.8}
 
   /* 히어로 (표지) */
-  .s-hero{flex-direction:row;align-items:center;gap:40px}
-  .s-hero .left{flex:1.05;padding-top:14px}
+  .s-hero{flex-direction:row;align-items:stretch;gap:40px}
+  .s-hero .left{flex:1.05;display:flex;flex-direction:column}
   .s-hero h1{font-size:62px;font-weight:800;line-height:1.12;color:var(--ink);letter-spacing:-1px}
   .s-hero .sub{margin-top:18px;font-size:20px;color:var(--gray);font-weight:500}
   .tags{display:flex;gap:10px;margin-top:32px;flex-wrap:wrap}
@@ -363,7 +363,7 @@
   .s-prompt .pnote .tag{flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.5px;color:var(--mut);border:1px solid var(--glass-bd);border-radius:6px;padding:2px 9px;background:var(--glass)}
 
   /* divider / break / closing */
-  .divider{justify-content:center;align-items:flex-start}
+  .divider{justify-content:flex-start;align-items:flex-start}
   .divider .part{font-size:16px;font-weight:800;letter-spacing:4px;color:var(--gold);margin-bottom:14px}
   .divider h1{font-size:66px;font-weight:800;line-height:1.1;letter-spacing:-1px}
   .divider .sub{margin-top:18px;font-size:20px;color:var(--gray)}
@@ -377,14 +377,14 @@
   .break .big{font-size:70px;font-weight:800;color:var(--ink)}
   .break .m{margin-top:16px;font-size:22px;color:var(--gray)} .break .m b{color:var(--gold)}
   .break .rest{margin-top:26px;font-size:16px;color:var(--mut)}
-  .closing{justify-content:center}
+  .closing{justify-content:flex-start}
   .closing h2{font-size:48px;font-weight:800;line-height:1.15}
   .closing .curve{margin:26px 0 0}
   .closing .next{margin-top:30px;padding:20px 26px;border-radius:16px;background:var(--glass);
     border:1px solid var(--glass-bd);font-size:19px;color:var(--gray)}
   .closing .next b{color:var(--gold)}
   /* 28 클로징 · 좌 콘텐츠 + 우 미래 이미지 */
-  .s-close{display:flex;gap:44px;flex:1;align-items:center;min-height:0}
+  .s-close{display:flex;gap:44px;flex:1;align-items:stretch;min-height:0}
   .s-close .left{flex:1.12;min-width:0;display:flex;flex-direction:column}
   .s-close .left .kicker{align-self:flex-start}
   .s-close .left h2{font-size:40px}
