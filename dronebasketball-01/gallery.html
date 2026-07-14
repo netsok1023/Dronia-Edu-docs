@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>갤러리 — 드론농구</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo"><img src="logo.png" alt="대한드론농구협회"></a>
+  <a class="m" href="index.html">홈</a>
+  <a class="m" href="about.html">소개</a>
+  <a class="m" href="video.html">영상</a>
+  <a class="m" href="rules.html">규칙</a>
+  <a class="m" href="activity.html">활동</a>
+  <a class="m on" href="gallery.html">갤러리</a>
+  <a class="cta" href="contact.html">문의하기</a>
+</nav>
+
+<header class="phead">
+  <div class="eyebrow">GALLERY</div>
+  <h1>현장 모습</h1>
+  <p>대회 · 교육 · 체험 현장의 순간들</p>
+</header>
+
+<section class="block" style="text-align:center">
+  <div class="gtabs">
+    <button class="gtab on" data-g="comp">대회</button>
+    <button class="gtab" data-g="edu">교육</button>
+    <button class="gtab" data-g="exp">체험·행사</button>
+  </div>
+
+  <div class="gstage" id="gstage">
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9AA6BD;text-align:center;padding:1rem">사진을 준비 중입니다.</div>
+  </div>
+
+</section>
+
+<script src="images_list.js" charset="utf-8"></script>
+<script>
+(function(){
+  if (typeof GALLERY === 'undefined') { return; }
+  var stage = document.getElementById('gstage');
+  stage.innerHTML = '';
+  var cats = ['comp','edu','exp'];
+  var panels = {};
+  cats.forEach(function(cat, ci){
+    var arr = GALLERY[cat] || [];
+    var panel = document.createElement('div');
+    panel.className = 'gpanel' + (ci===0 ? ' on' : '');
+    panel.setAttribute('data-panel', cat);
+    arr.forEach(function(it, k){
+      var s = document.createElement('div');
+      s.className = 'gslide' + (k===0 ? ' on' : '');
+      s.style.backgroundImage = "url('images/" + it.src + "')";
+      panel.appendChild(s);
+    });
+    var cap = document.createElement('div');
+    cap.className = 'gcap';
+    cap.textContent = arr.length ? arr[0].cap : '';
+    panel.appendChild(cap);
+    stage.appendChild(panel);
+    panels[cat] = panel;
+    if (arr.length > 1) {
+      var i = 0;
+      setInterval(function(){
+        i = (i+1) % arr.length;
+        var sl = panel.querySelectorAll('.gslide');
+        sl.forEach(function(x, j){ x.classList.toggle('on', j===i); });
+        cap.textContent = arr[i].cap;
+      }, 3000);
+    }
+  });
+  var tabs = document.querySelectorAll('.gtab');
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(x){ x.classList.remove('on'); });
+      t.classList.add('on');
+      cats.forEach(function(c){ if (panels[c]) panels[c].classList.toggle('on', c===t.dataset.g); });
+    });
+  });
+})();
+</script>
+
+<footer>
+  <img class="flogo" src="logo-round.png" alt="대한드론농구협회">
+  <div class="forg">(사)대한드론농구협회 · KOREA BASKET DRONEBALL ASSOCIATION</div>
+  <div class="finfo">대표 정한옥 · 등록번호 629-82-00748 · 충남 아산시 신정로 484</div>
+  <div class="finfo">TEL 041-531-0914 · E-mail kbdba@naver.com</div>
+  <div class="fcopy">© 대한드론농구협회 All Rights Reserved.</div>
+</footer>
+
+</body>
+</html>
