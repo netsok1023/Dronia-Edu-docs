@@ -13,6 +13,11 @@
      ============================================================ */
   *{margin:0;padding:0;box-sizing:border-box}
   :root{
+  /* 폰트 토큰 표준 §3-3 (26.07.19 이관·값 그대로) */
+  --font-title:"Black Han Sans",Pretendard,sans-serif;
+  --font-subtitle:Pretendard,"Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+  --font-body:Pretendard,"Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+  --font-code:"D2Coding",Consolas,Menlo,monospace;
     --bg:#0d1220; --bg2:#0a0e18; --panel:#131c30; --panel2:#0f1728;
     --ink:#eef2f8; --gray:#98a3b6; --mut:#5c6678;
     --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
@@ -26,7 +31,7 @@
   }
   html,body{height:100%}
   body{background:var(--bg2);color:var(--ink);
-    font-family:Pretendard,"Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+    font-family:var(--font-body,Pretendard,"Malgun Gothic","맑은 고딕",system-ui,sans-serif);
     display:flex;align-items:center;justify-content:center;overflow:hidden;
     -webkit-font-smoothing:antialiased;word-break:keep-all}
   #stagewrap{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}
@@ -81,7 +86,7 @@
   .kick{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:700;
     letter-spacing:.14em;text-transform:uppercase;color:var(--acc)}
   .kick::before{content:"";width:22px;height:2px;background:var(--acc)}
-  .display{font-family:'Black Han Sans',Pretendard,sans-serif;font-weight:400;
+  .display{font-family:var(--font-title,'Black Han Sans',Pretendard,sans-serif);font-weight:400;
     line-height:1.04;letter-spacing:-.01em;color:var(--ink)}
   .acc{color:var(--acc)}
   .ttl{font-weight:800;line-height:1.12;letter-spacing:-.015em;color:var(--ink)}
@@ -91,7 +96,7 @@
   .head{margin-bottom:30px}
   .head .kick{margin-bottom:16px}
   /* ── STEP 고정 배지 — 모든 STEP 슬라이드 좌상단 동일 위치·크기(넘길 때 안 튐) ── */
-  .stepno{font-family:'Black Han Sans',Pretendard,sans-serif;font-weight:400;
+  .stepno{font-family:var(--font-title,'Black Han Sans',Pretendard,sans-serif);font-weight:400;
     font-size:23px;line-height:1;letter-spacing:.03em;color:var(--acc)}
   .head.stp{display:flex;flex-direction:column;gap:12px;margin-bottom:26px}
   .head.stp .kick{margin-bottom:0}
@@ -125,7 +130,7 @@
   .cover .trk .t{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--acc)}
   .cover .trk .d{font-size:16px;font-weight:600;color:var(--ink)}
   .cover .idx{position:absolute;right:24px;top:50%;transform:translateY(-50%);
-    font-family:'Black Han Sans',sans-serif;font-size:420px;line-height:.8;
+    font-family:var(--font-title,'Black Han Sans',sans-serif);font-size:420px;line-height:.8;
     background:linear-gradient(180deg,rgba(87,166,255,.10),rgba(87,166,255,.02) 60%,transparent);
     -webkit-background-clip:text;background-clip:text;color:transparent;
     -webkit-text-stroke:2px rgba(120,182,255,.30);
@@ -144,7 +149,7 @@
   .divider h1{font-size:60px;max-width:940px;margin-bottom:14px}
   .divider .sub{font-size:19px;color:var(--gray);max-width:720px;line-height:1.6}
   .divider .bar{width:64px;height:4px;background:var(--acc);margin:0 auto 24px}
-  .divider .pnum{position:absolute;right:44px;bottom:52px;font-family:'Black Han Sans',sans-serif;
+  .divider .pnum{position:absolute;right:44px;bottom:52px;font-family:var(--font-title,'Black Han Sans',sans-serif);
     font-size:296px;line-height:.8;color:transparent;-webkit-text-stroke:1.5px var(--acc-soft);z-index:0}
   /* PART 03 = 섹션 히어로(폰 이미지) — 좌 텍스트 + 우 이미지 split (01·02는 중앙 유지) */
   .divider.hero{flex-direction:row;justify-content:space-between;align-items:center;text-align:left;gap:44px}
@@ -198,7 +203,7 @@
   .term .bar i{width:11px;height:11px;border-radius:50%;background:#39404f}
   .term .bar i:nth-child(1){background:#ff5f57}.term .bar i:nth-child(2){background:#febc2e}.term .bar i:nth-child(3){background:#28c840}
   .term .bar .tool{margin-left:auto;font-size:13px;font-weight:700;color:var(--acc);letter-spacing:.02em}
-  .term pre{flex:1;margin:0;padding:20px 26px;font-family:"D2Coding",Consolas,Menlo,"Malgun Gothic",monospace;
+  .term pre{flex:1;margin:0;padding:20px 26px;font-family:var(--font-code,"D2Coding",Consolas,Menlo,"Malgun Gothic",monospace);
     font-size:18.5px;line-height:1.5;color:var(--code-ink);white-space:pre-wrap;word-break:break-all;overflow:hidden}
   .term pre.dense{font-size:15.5px;line-height:1.42;padding:16px 24px}
   .term pre.code{font-size:12.5px;line-height:1.4;padding:12px 22px;word-break:break-all;white-space:pre-wrap}
@@ -248,7 +253,7 @@
   .erow:not(:last-child)::after{content:"";position:absolute;left:33px;bottom:-7px;z-index:2;width:13px;height:13px;
     border-right:2.4px solid var(--azure);border-bottom:2.4px solid var(--azure);transform:rotate(45deg);opacity:.85}
   .enode{flex:0 0 auto;width:78px;height:78px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-    font-family:'Black Han Sans',sans-serif;font-size:37px;line-height:1;color:#fff;
+    font-family:var(--font-title,'Black Han Sans',sans-serif);font-size:37px;line-height:1;color:#fff;
     background:radial-gradient(circle at 34% 28%,var(--n1,#6fa8ec),var(--n2,#2e5aa8));
     box-shadow:0 13px 28px -6px var(--nsh,rgba(87,166,255,.5)),inset 0 0 0 1px rgba(255,255,255,.2)}
   .etxt{flex:0 0 400px;min-width:0;display:flex;flex-direction:column;justify-content:center}
@@ -303,7 +308,7 @@
   .prep4{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;flex:1;margin-top:18px;min-height:0}
   .pchip{position:relative;min-height:98px;display:flex;align-items:center}
   .pchip .pghost{position:absolute;left:-6px;top:50%;transform:translateY(-50%);z-index:0;pointer-events:none;user-select:none;
-    font-family:'Black Han Sans',sans-serif;font-size:104px;line-height:1;color:transparent;
+    font-family:var(--font-title,'Black Han Sans',sans-serif);font-size:104px;line-height:1;color:transparent;
     -webkit-text-stroke:2px var(--pc,var(--acc));opacity:.5}
   .pchip .pdot{position:absolute;left:60px;top:50%;transform:translate(0,10px);width:7px;height:7px;border-radius:50%;
     background:var(--pc,var(--acc));box-shadow:0 0 12px 2px var(--pc,var(--acc));z-index:0}
@@ -311,7 +316,7 @@
   .pchip .plabel{font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--pc,var(--acc));margin-bottom:4px;text-transform:uppercase}
   .pchip h4{font-size:27px;font-weight:800;color:var(--ink);letter-spacing:-.015em;line-height:1.15;margin-bottom:5px}
   .pchip .pcap{font-size:14px;color:var(--gray);line-height:1.4}
-  .pchip .pcap code{font-family:"D2Coding",Consolas,monospace;font-size:12.5px;color:var(--ink);background:rgba(255,255,255,.08);padding:1px 6px;border-radius:3px}
+  .pchip .pcap code{font-family:var(--font-code,"D2Coding",Consolas,monospace);font-size:12.5px;color:var(--ink);background:rgba(255,255,255,.08);padding:1px 6px;border-radius:3px}
   .pchip .pcap b{color:var(--ink);font-weight:700}
 
   /* ── 준비물 칩 클릭 드릴다운(세부 오버레이 — 5차시는 미사용이나 엔진 동일 이식) ── */
@@ -329,7 +334,7 @@
   .pdclose:hover{background:rgba(255,255,255,.12);color:var(--ink)}
   .pdhead{display:flex;align-items:center;gap:18px;margin-bottom:16px}
   .pdhead .pdnum{flex:0 0 auto;width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;
-    font-family:'Black Han Sans',sans-serif;font-size:30px;color:#fff;background:linear-gradient(150deg,var(--pdc1,#57a6ff),var(--pdc2,#2e5aa8))}
+    font-family:var(--font-title,'Black Han Sans',sans-serif);font-size:30px;color:#fff;background:linear-gradient(150deg,var(--pdc1,#57a6ff),var(--pdc2,#2e5aa8))}
   .pdhead .pdkick{font-size:12.5px;font-weight:800;letter-spacing:.05em;color:var(--acc);margin-bottom:4px}
   .pdhead h3{font-size:31px;font-weight:800;color:var(--ink);letter-spacing:-.02em}
   .pdwhat{font-size:15px;color:var(--gray);line-height:1.55;max-width:1060px;margin-bottom:22px}
@@ -341,7 +346,7 @@
     display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--acc);background:var(--acc-soft)}
   .pdsteps li b{display:block;font-size:16.5px;color:var(--ink);font-weight:800;margin-bottom:3px}
   .pdsteps li span{font-size:13.5px;color:var(--gray);line-height:1.5}
-  .pdsteps li code{font-family:"D2Coding",Consolas,monospace;font-size:12.5px;color:var(--ink);background:rgba(255,255,255,.08);padding:1px 6px;border-radius:3px}
+  .pdsteps li code{font-family:var(--font-code,"D2Coding",Consolas,monospace);font-size:12.5px;color:var(--ink);background:rgba(255,255,255,.08);padding:1px 6px;border-radius:3px}
   .pdshot{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
   .pdslot{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:20px;
     border:1.5px dashed var(--line2);border-radius:12px;background:rgba(255,255,255,.02);color:var(--mut)}
@@ -349,7 +354,7 @@
   .pdslot .pdslotmain{font-size:15px;font-weight:800;color:var(--gray)}
   .pdslot .pdslotsub{font-size:12.5px;color:var(--mut)}
   .pdshot figcaption{font-size:13px;color:var(--gray)}
-  .pdshot figcaption code{font-family:"D2Coding",Consolas,monospace;color:var(--acc)}
+  .pdshot figcaption code{font-family:var(--font-code,"D2Coding",Consolas,monospace);color:var(--acc)}
   .pdcaution{margin-top:18px;display:flex;align-items:flex-start;gap:12px;font-size:13.5px;color:var(--gray);line-height:1.5}
   .pdcaution .tag{flex:0 0 auto;font-size:11.5px;font-weight:800;color:var(--up);background:rgba(232,119,107,.14);padding:4px 10px;border-radius:4px}
   .pdcaution b{color:var(--ink);font-weight:700}
@@ -363,7 +368,7 @@
   .sgcol li::before{content:counter(sg);flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--acc-soft);
     color:var(--acc);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
   .sgcol li b{color:var(--ink);font-weight:700}
-  .sgcol li code{font-family:"D2Coding",Consolas,monospace;font-size:11.5px;color:var(--indigo);background:rgba(143,140,242,.1);padding:1px 5px;border-radius:3px}
+  .sgcol li code{font-family:var(--font-code,"D2Coding",Consolas,monospace);font-size:11.5px;color:var(--indigo);background:rgba(143,140,242,.1);padding:1px 5px;border-radius:3px}
 
   /* ── 핵심 사실 강조 (알림형 콜아웃 — 상자 대신 열린 강조) ── */
   .keyfact{justify-content:center;align-items:flex-start}
@@ -372,7 +377,7 @@
   .keyfact .kghost{display:inline-flex;align-items:center;justify-content:center;
     width:54px;height:54px;border-radius:50%;margin-bottom:22px;
     background:var(--acc-soft);color:var(--acc);
-    font-family:'Black Han Sans',sans-serif;font-size:30px;line-height:1}
+    font-family:var(--font-title,'Black Han Sans',sans-serif);font-size:30px;line-height:1}
   .keyfact .kfmsg,.keyfact .kfsub{position:relative;z-index:1}
   .keyfact .kfmsg{font-size:33px;font-weight:800;line-height:1.32;letter-spacing:-.015em;color:var(--ink);margin-bottom:18px;max-width:92%}
   .keyfact .kfmsg .acc{color:var(--acc)}
@@ -383,7 +388,7 @@
   .duo2{display:flex;align-items:center;justify-content:center;gap:18px;flex:1;margin-top:22px;min-height:0}
   .dbox{position:relative;overflow:hidden;flex:0 1 460px;height:220px;padding:28px 32px;background:var(--panel2);border-top:3px solid var(--acc);display:flex;flex-direction:column;justify-content:center}
   .dbox .dghost{position:absolute;right:-14px;bottom:-30px;z-index:0;pointer-events:none;user-select:none;
-    font-family:'Black Han Sans',sans-serif;font-size:132px;line-height:1;color:transparent;
+    font-family:var(--font-title,'Black Han Sans',sans-serif);font-size:132px;line-height:1;color:transparent;
     -webkit-text-stroke:1.5px rgba(255,255,255,.12)}
   .dbox .dl,.dbox h4,.dbox p{position:relative;z-index:1}
   .dbox .dl{font-size:12.5px;font-weight:800;letter-spacing:.06em;color:var(--acc);margin-bottom:12px}
@@ -395,7 +400,7 @@
   .tri3{display:flex;gap:16px;flex:1;align-items:center;margin-top:22px;min-height:0}
   .tricard{position:relative;overflow:hidden;flex:1;height:230px;padding:26px 26px;background:var(--panel2);border-top:3px solid var(--acc);display:flex;flex-direction:column;justify-content:center}
   .tricard .tghost{position:absolute;right:-10px;bottom:-22px;z-index:0;pointer-events:none;user-select:none;
-    font-family:'Black Han Sans',sans-serif;font-size:104px;line-height:1;color:transparent;
+    font-family:var(--font-title,'Black Han Sans',sans-serif);font-size:104px;line-height:1;color:transparent;
     -webkit-text-stroke:1.5px rgba(255,255,255,.1)}
   .tricard .tl,.tricard h4,.tricard p{position:relative;z-index:1}
   .tricard .tl{font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--acc);margin-bottom:10px}
@@ -407,7 +412,7 @@
   .cpcard{position:relative;overflow:hidden;flex:0 1 480px;height:280px;padding:30px 32px;background:var(--panel2);border:1px solid var(--line);display:flex;flex-direction:column;justify-content:center}
   .cpcard.reco{border-color:var(--acc-line);background:var(--acc-soft)}
   .cpcard .cghost{position:absolute;right:-10px;top:-26px;z-index:0;pointer-events:none;user-select:none;
-    font-family:'Black Han Sans',sans-serif;font-size:148px;line-height:1;color:transparent;
+    font-family:var(--font-title,'Black Han Sans',sans-serif);font-size:148px;line-height:1;color:transparent;
     -webkit-text-stroke:1.5px rgba(255,255,255,.1)}
   .cpcard .cpl,.cpcard h4,.cpcard ul{position:relative;z-index:1}
   .cpcard .cpl{font-size:13px;font-weight:800;letter-spacing:.06em;color:var(--acc);margin-bottom:14px}
@@ -427,7 +432,7 @@
   .wbox{position:relative;overflow:hidden;flex:1;padding:36px 32px;min-height:170px;background:var(--panel);border:1px solid var(--line2);
     border-top:4px solid var(--acc);box-shadow:0 24px 50px rgba(0,0,0,.34);display:flex;flex-direction:column;justify-content:center}
   .wbox .wghost{position:absolute;right:-16px;bottom:-34px;z-index:0;pointer-events:none;user-select:none;
-    font-family:'Black Han Sans',sans-serif;font-size:140px;line-height:1;color:transparent;
+    font-family:var(--font-title,'Black Han Sans',sans-serif);font-size:140px;line-height:1;color:transparent;
     -webkit-text-stroke:1.5px rgba(255,255,255,.1)}
   .wbox .wn,.wbox .wt,.wbox .wd{position:relative;z-index:1}
   .wbox .wn{font-size:13px;font-weight:800;letter-spacing:.1em;color:var(--acc);margin-bottom:14px}
@@ -440,7 +445,7 @@
   .finale .kick{justify-content:center}
   .finale .fsub{margin-left:auto;margin-right:auto}
   .finale .frow{justify-content:center}
-  .finale .big2{font-family:'Black Han Sans',Pretendard,sans-serif;font-weight:400;font-size:56px;line-height:1.14;
+  .finale .big2{font-family:var(--font-title,'Black Han Sans',Pretendard,sans-serif);font-weight:400;font-size:56px;line-height:1.14;
     letter-spacing:-.01em;color:var(--ink);margin-bottom:22px}
   .finale .big2 .acc{color:var(--acc)}
   .finale .fsub{font-size:19px;color:var(--gray);line-height:1.72;max-width:900px}
@@ -486,7 +491,7 @@
 .rules8 .rlist{flex:1 1 0;display:grid;grid-template-columns:1fr 1fr;gap:18px 26px}
 .rules8 .ritem{display:flex;align-items:center;gap:14px}
 .rules8 .rnum{flex:0 0 auto;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-family:'Black Han Sans',sans-serif;font-size:17px;color:var(--acc);background:var(--acc-soft)}
+  font-family:var(--font-title,'Black Han Sans',sans-serif);font-size:17px;color:var(--acc);background:var(--acc-soft)}
 .rules8 .rlabel{font-size:18.5px;font-weight:700;color:var(--ink);letter-spacing:-.005em}
 .rules8 .rphoto{flex:0 0 340px;display:flex;flex-direction:column;gap:12px}
 .rules8 .rphoto .photoframe{height:430px}
@@ -525,7 +530,7 @@
 .statement.split{flex-direction:row;justify-content:space-between;align-items:center;gap:40px;text-align:left}
 .statement.split .kick{justify-content:flex-start}
 .statement.split .stext{flex:1 1 0;min-width:0}
-.statement.split .big2{font-family:'Black Han Sans',Pretendard,sans-serif;font-weight:400;font-size:32px;line-height:1.24;color:var(--ink);margin-bottom:16px}
+.statement.split .big2{font-family:var(--font-title,'Black Han Sans',Pretendard,sans-serif);font-weight:400;font-size:32px;line-height:1.24;color:var(--ink);margin-bottom:16px}
 .statement.split .hook{font-size:19px;font-weight:700;color:var(--gray)}
 .statement.split .sphoto{flex:0 0 420px}
 .statement.split .sphoto .photoframe{width:100%}
