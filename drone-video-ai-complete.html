@@ -13,7 +13,7 @@
     --ink:#fff9ea; --gray:#c2c9d4; --mut:#808a9b;
     --glass:rgba(255,255,255,.05); --glass-bd:rgba(255,255,255,.12);
     --code:#0b0f17; --code-ink:#e8e3d6;
-    --acc:#f6a832; --acc-rgb:246,168,50; --cool:#6ea8dc; --cool-rgb:110,168,220;
+    --acc:#f6a832; --acc-rgb:246,168,50; --acc-hi:#ffe6b0; --acc-dk:#c9781a; --cool:#6ea8dc; --cool-rgb:110,168,220;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
@@ -41,9 +41,9 @@
     letter-spacing:.4px;margin-bottom:20px}
   .kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--acc)}
   .gold{color:var(--gold)} .coral{color:var(--coral)} .acc{color:var(--acc)}
-  .slide.acc-coral{--acc:#f07a4b;--acc-rgb:240,122,75}
-  .slide.acc-cool{--acc:var(--cool);--acc-rgb:110,168,220}
-  .slide.acc-green{--acc:#8fce6c;--acc-rgb:143,206,108}
+  .slide.acc-coral{--acc:#f07a4b;--acc-rgb:240,122,75;--acc-hi:#ffb27d;--acc-dk:#b8502a}
+  .slide.acc-cool{--acc:var(--cool);--acc-rgb:110,168,220;--acc-hi:#c7e0f4;--acc-dk:#3f7cb4}
+  .slide.acc-green{--acc:#8fce6c;--acc-rgb:143,206,108;--acc-hi:#d9f0cb;--acc-dk:#5f9c43}
   [data-fs]{transition:opacity .3s ease,transform .3s ease,filter .3s ease}
   .fs-dim{opacity:.25;filter:saturate(.4)}
   /* 단독 영상 슬라이드: 강조 대상이 하나뿐 → 확대·링·흐림 전부 억제, 정지→재생만 */
