@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" data-ed-ver="v6.95-20260721"><head>
+<html lang="ko" data-ed-ver="v6.97-20260721"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>드론 및 생성형 AI 활용 실무 역량 강화 과정</title>
@@ -831,27 +831,33 @@
     if(s===cur)return;
     if(cur){targets(cur).forEach(function(v){try{v.pause()}catch(e){}})}
     cur=s; queue=[];
-    if(s&&!s.querySelector('[data-fs]')&&!s.querySelector('[data-spot]')){var t=targets(s); if(t.length){t.forEach(freeze); queue=t.slice()}}
+    if(s&&!s.querySelector('[data-fs]')&&!s.hasAttribute('data-spot')&&!s.querySelector('[data-spot],.spotitem')){var t=targets(s); if(t.length){t.forEach(freeze); queue=(t.length===1)?t.slice():[]}}
   }
-  function goPlay(e){ if(ed())return; if(!queue.length)return;
+  function spotNow(){ var s=null,all=document.querySelectorAll('.slide');
+    for(var i=0;i<all.length;i++){if(all[i].classList.contains('on')){s=all[i];break}}
+    return !!(s&&(s.querySelector('[data-fs]')||s.hasAttribute('data-spot')||s.querySelector('[data-spot],.spotitem'))) }
+  function goPlay(e){ if(ed())return; if(spotNow())return; if(!queue.length)return;
     var v=queue.shift();
     try{v.currentTime=0}catch(_){}
     try{var p=v.play(); if(p&&p.catch)p.catch(function(){try{v.muted=true;v.play().catch(function(){})}catch(_){}})}catch(_){}
     e.preventDefault(); e.stopImmediatePropagation();
   }
-  function setup(){ sync();
-    try{new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['class'],subtree:true})}catch(e){}
-    document.addEventListener('keydown',function(e){
+  function setup(){
+    try{if(window.__ed_va_cleanup)window.__ed_va_cleanup()}catch(e){}
+    sync();
+    var _mo=null; try{_mo=new MutationObserver(sync); _mo.observe(document.body,{attributes:true,attributeFilter:['class'],subtree:true})}catch(e){}
+    var _kh=function(e){
       var k=e.key; if(k!=='ArrowRight'&&k!=='PageDown'&&k!==' '&&k!=='Spacebar')return;
       if(e.ctrlKey||e.metaKey||e.altKey)return;
       var t=e.target; if(t&&t.tagName&&(/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable))return;
       goPlay(e);
-    },true);
-    document.addEventListener('click',function(e){
+    }; document.addEventListener('keydown',_kh,true);
+    var _ch=function(e){
       var nx=document.getElementById('next'); if(!nx)return;
       var t=e.target; if(t!==nx&&!(nx.contains&&nx.contains(t)))return;
       goPlay(e);
-    },true);
+    }; document.addEventListener('click',_ch,true);
+    window.__ed_va_cleanup=function(){try{document.removeEventListener('keydown',_kh,true);document.removeEventListener('click',_ch,true);if(_mo)_mo.disconnect();}catch(e){}};
   }
   if(document.readyState!=='loading')setup(); else document.addEventListener('DOMContentLoaded',setup);
 })();</script></body></html>
