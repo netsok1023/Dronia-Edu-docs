@@ -170,6 +170,39 @@
   .ttable .time{font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;transition:color 1s}
   .ttable .dist{color:var(--muted);font-variant-numeric:tabular-nums}
 
+  /* voyager */
+  .vphoto{position:relative;border-radius:24px;overflow:hidden;border:1px solid var(--cardbd);
+    margin-bottom:1.6rem}
+  .vphoto img{width:100%;display:block;max-height:240px;object-fit:cover}
+  .vphoto .vcap{position:absolute;left:0;right:0;bottom:0;padding:1.1rem 1.4rem;
+    background:linear-gradient(0deg,rgba(4,5,12,.94),transparent 80%);font-size:.95rem;color:var(--ink)}
+  .vepisode{background:var(--card);border:1px solid var(--cardbd);border-radius:18px;
+    padding:1.4rem 1.6rem;margin-bottom:2rem;font-size:1.1rem;line-height:1.7;color:var(--ink)}
+  .vepisode b{color:var(--accent)}
+  .vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:1.4rem}
+  .vcard{background:var(--card);border:1px solid var(--cardbd);border-radius:24px;padding:1.8rem;
+    display:flex;flex-direction:column;gap:.9rem}
+  .vcard h3{font-size:clamp(1.15rem,2.4vw,1.3rem);font-weight:800;color:#fff;display:flex;
+    align-items:center;gap:.5rem}
+  .vcard .vtag{font-size:.72rem;font-weight:800;letter-spacing:.06em;color:var(--accent);
+    background:color-mix(in srgb,var(--accent) 16%,transparent);border-radius:999px;
+    padding:.2rem .7rem}
+  .vcard ul{list-style:none}
+  .vcard li{position:relative;padding:.4rem 0 .4rem 1.15rem;color:var(--ink);font-size:1.05rem;
+    line-height:1.6;opacity:.95}
+  .vcard li::before{content:"";position:absolute;left:0;top:.72em;width:6px;height:6px;
+    border-radius:50%;background:var(--accent)}
+  .vcard li b{color:#fff}
+  .vcard .vimg{border-radius:16px;overflow:hidden;border:1px solid var(--cardbd);position:relative}
+  .vcard .vimg .vimgwrap{position:relative}
+  .vcard .vimg img{width:100%;display:block}
+  .vcard .vimg .vmarker{position:absolute;width:22px;height:22px;border-radius:50%;
+    border:2px solid #fff;box-shadow:0 0 0 5px rgba(255,255,255,.28),0 0 14px 3px rgba(255,255,255,.6);
+    transform:translate(-50%,-50%);animation:vpulse 1.8s ease-in-out infinite}
+  @keyframes vpulse{0%,100%{opacity:.55}50%{opacity:1}}
+  .vcard .vimg .vimgcap{padding:.7rem .95rem;font-size:.92rem;line-height:1.5;color:var(--ink);
+    background:rgba(255,255,255,.04)}
+
   /* quiz */
   .quiz{display:flex;flex-direction:column;gap:1.1rem;max-width:780px}
   .q{background:var(--card);border:1px solid var(--cardbd);border-radius:18px;padding:clamp(1.1rem,2.5vw,1.6rem)}
@@ -289,6 +322,7 @@
   <a href="#planets">행성</a>
   <a href="#explore">탐구</a>
   <a href="#quiz">퀴즈</a>
+  <a href="#voyager">보이저</a>
 </nav>
 
 <header class="hero" id="home">
@@ -351,6 +385,65 @@
     </div>
     <div class="quiz" id="quizBox"></div>
     <div class="score" id="score" hidden></div>
+  </div>
+</section>
+
+<section class="block" id="voyager">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow">Bonus · 옵션</div>
+      <h2>보이저 1호와 2호, 들어보셨나요?</h2>
+      <p class="lead">지금 이 순간에도 태양계 밖을 향해 날아가고 있는 두 탐사선이 있습니다.
+        1977년에 발사돼 반세기 가까이 비행 중인 보이저 1호·2호를 만나 봅니다.</p>
+    </div>
+    <div class="vphoto reveal">
+      <img src="solar-voyager-probe-03.jpg" alt="발사 전 조립실에서 점검 중인 보이저 탐사선"
+        loading="lazy">
+      <div class="vcap">1976년 발사 전, 조립실에서 진동·충격 시험을 받고 있는 보이저 탐사선의 실제 모습
+        — 1호·2호는 완전히 동일한 설계로 만들어진 쌍둥이 탐사선입니다. (NASA/JPL 공식 아카이브)</div>
+    </div>
+    <div class="vepisode reveal">
+      🚀 <b>재밌는 발사 순서 에피소드</b> — 보이저 2호가 1977년 8월 20일, 보이저 1호가
+      9월 5일에 <i>나중에</i> 발사됐습니다. 그런데 왜 번호는 반대일까요?
+      1호가 더 빠른 궤도를 타고 목성에 먼저 도착했기 때문에, 먼저 도착한 쪽이 '1호'가 됐습니다.
+    </div>
+    <div class="vgrid">
+      <div class="vcard reveal">
+        <h3><span class="vtag">VOYAGER 1</span></h3>
+        <ul id="v1facts">
+          <li><b>발사</b> — 1977년 9월 5일. 2026년 현재 <b>약 49년째</b> 비행 중.</li>
+          <li><b>속도</b> — 시속 약 <b>61,195km</b>로 태양계 밖을 향해 이동 중.</li>
+          <li><b>경로</b> — 목성·토성만 지나갔습니다. 토성의 위성 <b>타이탄</b>에 최대한 가까이
+            접근하는 경로를 택하면서, 그 이후로는 태양계 평면 밖으로 벗어났습니다.</li>
+          <li><b>다가오는 이정표</b> — 2026년 11월 무렵, 지구로부터 <b>'1광일'</b>
+            (빛의 속도로도 24시간 걸리는 거리)에 도달할 예정입니다.</li>
+        </ul>
+        <div class="vimg">
+          <div class="vimgwrap">
+            <img src="solar-pale-blue-dot-03.jpg" alt="창백한 푸른 점 — 60억km 밖에서 본 지구" loading="lazy">
+            <div class="vmarker" style="left:59.4%;top:52%"></div>
+          </div>
+          <div class="vimgcap">'창백한 푸른 점' — 1990년 2월 14일, 지구로부터 약 60억km 떨어진 곳에서
+            보이저 1호가 찍은 사진. 동그라미로 표시한 작은 점 하나가 우리가 사는 지구입니다. (NASA/JPL)</div>
+        </div>
+      </div>
+      <div class="vcard reveal">
+        <h3><span class="vtag">VOYAGER 2</span></h3>
+        <ul id="v2facts">
+          <li><b>발사</b> — 1977년 8월 20일. 1호보다 약 보름 <b>먼저</b> 발사됐습니다.</li>
+          <li><b>경로</b> — 목성·토성을 지나 <b>천왕성·해왕성까지</b> 모두 방문한 유일한 탐사선
+            (그랜드 투어). 지금까지 해왕성을 지나간 탐사선은 보이저 2호뿐입니다.</li>
+          <li><b>골든레코드</b> — 1호·2호 모두에 실려 있는 금도금 디스크. 사진 115장·55개 언어
+            인사말·자연의 소리·음악 90분 분량을 담아, 외계 지적생명체에게 전하는
+            인류의 메시지를 싣고 함께 날아가고 있습니다.</li>
+        </ul>
+        <div class="vimg">
+          <img src="solar-golden-record-03.jpg" alt="골든레코드 실물 — 성조기를 든 보이저 프로젝트 매니저 뒤로 금도금 디스크가 놓여 있다" loading="lazy">
+          <div class="vimgcap">테이블 위 금색 원반이 실제 골든레코드입니다. 1977년, 발사 준비 중이던
+            보이저 탐사선 앞에서 촬영된 사진. (NASA/JPL)</div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
