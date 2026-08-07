@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ko" data-ed-ver="v8.59-20260807"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2026년 상반기 원자재 재고 분석 업무보고</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&amp;display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0a0e1a; --panel:#0e1420; --panel2:#161c27;
+    --glow-blue:rgba(90,116,255,.20); --glow-purple:rgba(146,102,224,.20);
+    --gold:#f6a832; --coral:#f07a4b;
+    --ink:#fff9ea; --gray:#c2c9d4; --mut:#808a9b;
+    --glass:rgba(255,255,255,.05); --glass-bd:rgba(255,255,255,.12);
+    --code:#0b0f17; --code-ink:#e8e3d6;
+    --acc:#f6a832; --acc-rgb:246,168,50; --cool:#6ea8dc; --cool-rgb:110,168,220;
+    --acc-hi:#ffe6b0; --acc-dk:#c9781a; /* 입체 자산 3-tone 파생쌍(26.07.19) — 골드 시드 정본값. acc 재정의 시 동반 재정의(§3 파생쌍 규칙) */
+    /* 폰트 토큰 표준(§3-3 · 26.07.19) — 값은 기존 하드코딩 리터럴 그대로(렌더 무변). 덱 이행 시 이 블록 복사·자체 변형 금지 */
+    --font-title:"Black Han Sans",Pretendard,sans-serif;
+    --font-subtitle:Pretendard,"Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+    --font-body:Pretendard,"Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+    --font-code:"D2Coding",Consolas,Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:var(--navy);font-family:var(--font-body);
+    color:var(--ink);display:flex;align-items:center;justify-content:center;overflow:hidden}
+  #stagewrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  #stage{width:1280px;height:720px;position:relative;flex:0 0 auto;transform-origin:center center;
+    border-radius:18px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,.6)}
+  .slide{position:absolute;inset:0;padding:60px 72px 64px;
+    background:
+      radial-gradient(circle at 16% 6%, var(--glow-blue), transparent 34%),
+      radial-gradient(circle at 82% 12%, var(--glow-purple), transparent 40%),
+      linear-gradient(155deg,#0c1120 0%, #0a0e1a 55%, #0b0f1c 100%);
+    opacity:0;pointer-events:none;transition:opacity var(--slide-trans,.45s) ease;display:flex;flex-direction:column}
+  .slide.on{opacity:1;pointer-events:auto}
+
+  /* 브랜딩 크롬 (JS 자동 주입 — ★26.07.08 v2: 워드마크 우하단·© 폐지, §8-1/§4-2 정본) */
+  /* ★아래 .mark의 로고 base64는 절대 직접 편집·재타이핑·부분 치환 금지 — 한 글자만 어긋나도 이미지가 통째 깨진다
+     (26.07.08 4차시 실측: 길이 동일·md5 상이 → 물고기 형태 렌더). 수정·이식은 항상 이 정본에서 통째 복사만. */
+  .wordmark{position:absolute;bottom:28px;right:72px;display:flex;align-items:center;gap:9px;
+    font-weight:800;letter-spacing:.4px;font-size:16px;color:var(--ink);opacity:.9;z-index:3}
+  .mark{width:30px;height:26px;background:url(data:image/png;base64,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) center/contain no-repeat;
+    filter:brightness(0) invert(1);opacity:.92;display:inline-block}
+  .foot{position:absolute;bottom:28px;left:72px;font-size:12.5px;color:var(--mut);letter-spacing:.3px;z-index:3}
+
+  /* 공통 요소 */
+  .kicker{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;background:var(--glass);
+    border:1px solid var(--glass-bd);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+    padding:7px 15px;border-radius:999px;font-size:13.5px;font-weight:700;color:var(--acc);
+    letter-spacing:.4px;margin-bottom:20px}
+  .kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--acc)}
+  .gold{color:var(--gold)} .coral{color:var(--coral)} .acc{color:var(--acc)}
+  /* ★파트별 지배색 로테이션(26.07.07, K-1 과녁① — 잰스파크 패턴 이식): 파트 단위로 slide에 클래스 부여 → 킥커·바·배지·차트가 한 번에 갈아탐. 기본=골드. ※gold/coral 대비가 정보인 장(versus·warncard)엔 붙이지 말 것 */
+  .slide.acc-coral{--acc:#f07a4b;--acc-rgb:240,122,75;--acc-hi:#ffb27d;--acc-dk:#b8502a} /* hi/dk=카탈로그 sc-ball 실물 정본값 */
+  .slide.acc-cool{--acc:var(--cool);--acc-rgb:110,168,220;--acc-hi:#c7e0f4;--acc-dk:#3f7cb4} /* hi/dk=골드 명도 관계 이식 산출(26.07.19) */
+  .slide.acc-green{--acc:#8fce6c;--acc-rgb:143,206,108;--acc-hi:#d9f0cb;--acc-dk:#5f9c43} /* 연두(26.07.07 강사 요청 — 색 다양화) · hi/dk=산출 */
+  /* ★단계 강조(fragment · 26.07.07 코워크 영상 이식): data-fs="1,2,..." 요소가 있으면 방향키가 슬라이드 안 단계를 먼저 진행 — 현재 항목만 또렷·확대·악센트 링, 나머지 흐림. 발표자 조작형이라 절제모션 규율과 무충돌 */
+  [data-fs]{transition:opacity var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1)),transform var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1)),filter var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1)),box-shadow var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1)),border-radius var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1))}
+  :root{--fs-in-delay:calc(var(--fs-trans,.3s)*.45)}
+  [data-fs].fs-focus{transition-delay:var(--fs-in-delay,0s)}
+  [data-link-obj]{transition:opacity var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1)),transform var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1)),filter var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1)),box-shadow var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1)),border-radius var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1))}
+  [data-link-obj].lk-active{transition-delay:var(--fs-in-delay,0s)}
+  [data-link-hl]{transition:opacity var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1)),filter var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1)),transform var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1))}
+  [data-link-hl].lk-focus{transition-delay:var(--fs-in-delay,0s)}
+  .fs-dim{opacity:var(--fs-dim-op,.25);filter:var(--fs-dim-sat,saturate(.4))}
+  /* ★CP-19(§48-22 · 사냥 W2-F2): z-index·border-radius·box-shadow 가 리터럴이라 앱의 「강조」 메뉴
+     (--fs-z·--fs-radius·--fs-shadow·흐림 2종)가 **새 덱에서 조용히 무효**였다. 엔진 FS_CSS 는 :where() 라 특이도 0 이어서
+     이 로컬 규칙에 항상 진다(F33) — 그래서 템플릿을 소비자로 바꾸는 것이 유일한 실효 경로다. 폴백은 현행값 그대로(무변형). */
+  .fs-focus{transform:scale(var(--fs-scale, 1.03));z-index:var(--fs-z,2);position:relative;border-radius:var(--fs-radius,14px);
+    box-shadow:var(--fs-shadow,0 0 0 2px rgba(var(--acc-rgb),.85), 0 18px 50px rgba(0,0,0,.45))}
+
+  h2.title{font-size:46px;font-weight:800;line-height:1.12;letter-spacing:-.5px;margin-bottom:6px}
+  .lead{font-size:18px;color:var(--gray);line-height:1.55;margin-bottom:26px;max-width:940px;font-weight:500}
+  .glass{background:var(--glass);border:1px solid var(--glass-bd);backdrop-filter:blur(7px);
+    -webkit-backdrop-filter:blur(7px);border-radius:22px;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+  .note{margin-top:auto;font-size:14.5px;color:var(--mut)}
+  .note b{color:var(--gray)}
+
+  #nav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:50;
+    background:rgba(10,14,26,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:7px 14px}
+  #nav button{background:none;border:none;color:var(--ink);font-size:20px;cursor:pointer;width:32px;height:32px;border-radius:50%}
+  #nav button:hover{background:rgba(255,255,255,.1)}
+  #nav .cnt{font-size:13.5px;color:var(--gray);min-width:56px;text-align:center;font-variant-numeric:tabular-nums}
+  /* 한글 줄바꿈(필수 — 1차시 실측 반영) */
+  h1,h2,h3,p,li,.title,.lead,.step,.note,.big{word-break:keep-all}
+  /* ===== 라이트 테마(파레트 대비) — 옛 스킴판 · data-theme 토큰 flip (26.07.11 표준 편입 · 정본 = slide-design 디자인시스템_상세.md §3-1 · 원문 = 1차시 정본 추출) ===== */
+  #stage[data-theme="light"]{
+    --navy:#f6f4ef; --panel:#ffffff; --panel2:#eef1f7;
+    --glow-blue:rgba(90,116,255,.06); --glow-purple:rgba(146,102,224,.05);
+    --gold:#a9740c; --coral:#c1512b;
+    --ink:#1a2233; --gray:#48546b; --mut:#8b95a8;
+    --glass:rgba(20,32,60,.05); --glass-bd:rgba(20,32,60,.14);
+    --code:#0f1a2e; --code-ink:#e7edf6;
+    --acc-hi:#cfa758; --acc-dk:#765108; /* B안 확정(26.07.19 나두 일임 판정) — 라이트 전용 파생: 다크 #ffe6b0은 라이트 배경서 hi 대비 소멸 → 딥골드 기반. 파트 로테이션(acc-coral/cool/green)의 라이트 hi/dk는 후속(취향) */
+  }
+  #stage[data-theme="light"] .slide{
+    background:
+      radial-gradient(circle at 16% 6%, var(--glow-blue), transparent 34%),
+      radial-gradient(circle at 82% 12%, var(--glow-purple), transparent 40%),
+      linear-gradient(155deg,#f8f7f2 0%, #f3f1ea 55%, #f6f4ef 100%);
+  }
+  #stage[data-theme="light"] .mark{filter:brightness(0);opacity:.82}
+  #stage[data-theme="light"] .foot{color:var(--gray)} /* 푸터 대비 보정 — 26.07.12 강사 확정 */
+</style>
+<style>
+</style>
+
+<style>
+@keyframes revealUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+/* ★spot-noscale(대표 지적 26.08.08 2차) — 긴 문장 컬럼은 spotitem 그룹에 남아 흐림/선명 전환(opacity·filter)은
+   그대로 받되, 확대(scale)만 무효화해 옆 컬럼을 침범하지 않게 한다. specificity(0,4,0)로 엔진 규칙(0,3,0)보다
+   높아 !important 불필요. */
+[data-spot] .spotitem.spot-on.spot-noscale,
+[data-spot] .spotitem.spot-off.spot-noscale{transform:scale(1);}
+</style>
+<style id="__ed_fx_css">[data-fx-ring="0"] .fs-focus,.fs-focus[data-fx-ring="0"],[data-fx-ring="0"] .lk-active,.lk-active[data-fx-ring="0"],[data-fx-ring="0"] .spotitem.spot-on,.spotitem.spot-on[data-fx-ring="0"]{box-shadow:none}
+[data-fx-ring="1"] .fs-focus,.fs-focus[data-fx-ring="1"],[data-fx-ring="1"] .lk-active,.lk-active[data-fx-ring="1"],[data-fx-ring="1"] .spotitem.spot-on,.spotitem.spot-on[data-fx-ring="1"]{box-shadow:0 0 0 var(--fx-ring-w,2px) rgba(var(--acc-rgb,124,92,255),.85)}
+[data-fx-lk="1"] .lk-active{transform:scale(var(--fx-lk-scale,1.055))!important;z-index:2;position:relative;background:var(--fx-lk-bg,rgba(47,158,68,.05))!important;border-radius:var(--fx-lk-radius,12px)}</style><style id="__ed_fs_css">:where([data-fs]){transition:transform var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1)),box-shadow var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1)),opacity var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1)),filter var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1)),border-radius var(--fs-trans,.3s) var(--fs-ease,cubic-bezier(0,0,.2,1))}:where([data-fs].fs-focus),:where([data-link-obj].lk-active),:where([data-link-hl].lk-focus){transition-delay:var(--fs-in-delay,0s)}
+:where(.fs-focus){transform:scale(var(--fs-scale,1.2));position:relative;z-index:var(--fs-z,5);border-radius:var(--fs-radius,14px);box-shadow:var(--fs-shadow,0 0 0 var(--fs-ring,2px) rgba(var(--acc-rgb),.85))}
+:where(.fs-dim){opacity:var(--fs-dim-op,.25);filter:var(--fs-dim-sat,saturate(.4))}</style><style id="__ed_spot_css">.spotitem{transition:opacity var(--spot-trans,.45s) var(--fs-ease,cubic-bezier(0,0,.2,1)),transform var(--spot-trans,.45s) var(--fs-ease,cubic-bezier(0,0,.2,1)),filter var(--spot-trans,.45s) var(--fs-ease,cubic-bezier(0,0,.2,1))}
+[data-spot] .spotitem.spot-off{opacity:.26;filter:blur(var(--spot-blur,1.7px));transform:scale(.975)}
+[data-spot] .spotitem.spot-on{opacity:1;filter:none;transform:scale(var(--fs-scale,1.2));z-index:3;box-shadow:0 32px 74px -14px rgba(0,0,0,.62)}</style></head>
+<body>
+<div id="stagewrap"><div id="stage" style="">
+<section class="slide on">
+  <div style="position: absolute; left: 96px; top: 200px; font-size: 15px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mut);">자재팀 업무보고</div>
+  <h1 style="position: absolute; left: 96px; top: 224px; width: 1000px; font-size: 46px; font-weight: 800; line-height: 1.32; color: var(--ink);">2026년 상반기<br><b style="color:var(--acc)">원자재 재고 분석 업무보고</b></h1>
+  <div style="position: absolute; left: 96px; top: 340px; width: 64px; height: 4px; background: var(--acc); border-radius: 2px;"></div>
+  <div style="position: absolute; left: 96px; top: 366px; font-size: 19px; color: var(--gray);">재고 현황 진단과 대응 방안</div>
+  <div style="position: absolute; left: 96px; top: 640px; font-size: 14.5px; color: var(--mut);">자재팀 · 2026년 8월 · 데이터 기준 2026년 1~6월(상반기)</div>
+  <div style="position: absolute; left: 1080px; top: 90px; width: 140px; height: 140px; opacity: 0.85; z-index: 1;"><svg viewBox="0 0 140 140" style="width:100%;height:100%"><defs><radialGradient id="cpOrb" cx="38%" cy="30%" r="80%"><stop offset="0%" stop-color="#ffe6b0"></stop><stop offset="55%" stop-color="#f6a832"></stop><stop offset="100%" stop-color="#a1640f"></stop></radialGradient></defs><circle cx="70" cy="70" r="58" fill="url(#cpOrb)"></circle></svg></div>
+</section>
+<section class="slide">
+  <div class="kicker" style="position:absolute;left:72px;top:60px;font-size:13.5px;font-weight:700;">EXECUTIVE SUMMARY</div>
+  <h2 class="title" style="position:absolute;left:72px;top:112px;width:1136px;margin:0;">한눈에 보는 상반기 재고 요약</h2>
+  <div style="position:absolute;left:72px;top:172px;width:1136px;background:#111a2c;border-left:4px solid var(--acc);border-radius:4px;padding:15px 20px;font-size:18px;color:var(--gray);line-height:1.6;">상반기 재고는 <b style="color:var(--acc)">입고가 출고를 소폭 상회</b>해 전반적으로 안정적이나, <b style="color:var(--acc)">28개 품목 중 8개(28.6%)가 안전재고 미달</b> 상태로 즉시 조치가 필요합니다.</div>
+  <div data-ed-outline="1|var(--glass-bd)|solid" style="position:absolute;left:72px;top:236px;width:272px;height:130px;background:var(--panel);box-sizing:border-box;border:1px solid var(--glass-bd);border-radius:8px;z-index:1;"></div>
+  <div style="position:absolute;left:72px;top:236px;width:4px;height:130px;background:var(--acc);border-radius:8px 0 0 8px;z-index:2;"></div>
+  <div style="position:absolute;left:92px;top:252px;width:240px;font-size:13px;font-weight:600;color:var(--mut);line-height:1.2;text-align:left;z-index:3;">기말재고 총액</div>
+  <div style="position:absolute;left:92px;top:276px;width:240px;font-size:26px;font-weight:800;color:var(--ink);line-height:1.15;text-align:left;z-index:3;">58,261,015원</div>
+  <div style="position:absolute;left:92px;top:312px;width:240px;font-size:12px;font-weight:500;color:var(--mut);line-height:1.3;text-align:left;z-index:3;">28개 자재 · 6개 분류 기준</div>
+  <div data-ed-outline="1|var(--glass-bd)|solid" style="position:absolute;left:360px;top:236px;width:272px;height:130px;background:var(--panel);box-sizing:border-box;border:1px solid var(--glass-bd);border-radius:8px;z-index:1;"></div>
+  <div style="position:absolute;left:360px;top:236px;width:4px;height:130px;background:var(--acc);border-radius:8px 0 0 8px;z-index:2;"></div>
+  <div style="position:absolute;left:380px;top:252px;width:240px;font-size:13px;font-weight:600;color:var(--mut);line-height:1.2;text-align:left;z-index:3;">상반기 순증감(입고−출고)</div>
+  <div style="position:absolute;left:380px;top:276px;width:240px;font-size:26px;font-weight:800;color:var(--ink);line-height:1.15;text-align:left;z-index:3;">+4,121개</div>
+  <div style="position:absolute;left:380px;top:312px;width:240px;font-size:12px;font-weight:500;color:var(--mut);line-height:1.3;text-align:left;z-index:3;">입고 134,923 / 출고 130,802</div>
+  <div data-ed-outline="1|var(--glass-bd)|solid" style="position:absolute;left:648px;top:236px;width:272px;height:130px;background:var(--panel);box-sizing:border-box;border:1px solid var(--glass-bd);border-radius:8px;z-index:1;"></div>
+  <div style="position:absolute;left:648px;top:236px;width:4px;height:130px;background:var(--coral);border-radius:8px 0 0 8px;z-index:2;"></div>
+  <div style="position:absolute;left:668px;top:252px;width:240px;font-size:13px;font-weight:600;color:var(--mut);line-height:1.2;text-align:left;z-index:3;">안전재고 미달 품목</div>
+  <div style="position:absolute;left:668px;top:276px;width:240px;font-size:26px;font-weight:800;color:var(--coral);line-height:1.15;text-align:left;z-index:3;">8종 (28.6%)</div>
+  <div style="position:absolute;left:668px;top:312px;width:240px;font-size:12px;font-weight:500;color:var(--mut);line-height:1.3;text-align:left;z-index:3;">28개 품목 중</div>
+  <div data-ed-outline="1|var(--glass-bd)|solid" style="position:absolute;left:936px;top:236px;width:272px;height:130px;background:var(--panel);box-sizing:border-box;border:1px solid var(--glass-bd);border-radius:8px;z-index:1;"></div>
+  <div style="position:absolute;left:936px;top:236px;width:4px;height:130px;background:var(--acc);border-radius:8px 0 0 8px;z-index:2;"></div>
+  <div style="position:absolute;left:956px;top:252px;width:240px;font-size:13px;font-weight:600;color:var(--mut);line-height:1.2;text-align:left;z-index:3;">관리 자재</div>
+  <div style="position:absolute;left:956px;top:276px;width:240px;font-size:26px;font-weight:800;color:var(--ink);line-height:1.15;text-align:left;z-index:3;">28종</div>
+  <div style="position:absolute;left:956px;top:312px;width:240px;font-size:12px;font-weight:500;color:var(--mut);line-height:1.3;text-align:left;z-index:3;">금속재·수지/플라스틱·전자부품·체결부품·고무/실리콘·소모재 6개 분류</div>
+</section>
+<section class="slide">
+  <div class="kicker" style="position:absolute;left:72px;top:60px;font-size:13.5px;font-weight:700;">KEY METRICS</div>
+  <h2 class="title" style="position:absolute;left:72px;top:112px;width:1136px;margin:0;">핵심 지표</h2>
+  <div style="position:absolute;left:72px;top:172px;width:1136px;background:#111a2c;border-left:4px solid var(--acc);border-radius:4px;padding:15px 20px;font-size:18px;color:var(--gray);line-height:1.6;">상반기 누적 기준 입고가 출고를 <b style="color:var(--acc)">4,121개 앞서며</b> 재고는 완만한 증가 추세를 보였습니다.</div>
+  <div data-ed-outline="1|var(--glass-bd)|solid" style="position:absolute;left:72px;top:236px;width:272px;height:90px;background:var(--panel);box-sizing:border-box;border:1px solid var(--glass-bd);border-radius:8px;z-index:1;"></div>
+  <div style="position:absolute;left:72px;top:236px;width:4px;height:90px;background:var(--acc);border-radius:8px 0 0 8px;z-index:2;"></div>
+  <div style="position:absolute;left:92px;top:252px;width:240px;font-size:13px;font-weight:600;color:var(--mut);line-height:1.2;text-align:left;z-index:3;">기말재고 총액</div>
+  <div style="position:absolute;left:92px;top:276px;width:240px;font-size:26px;font-weight:800;color:var(--ink);line-height:1.15;text-align:left;z-index:3;">58,261,015원</div>
+  <div data-ed-outline="1|var(--glass-bd)|solid" style="position:absolute;left:360px;top:236px;width:272px;height:90px;background:var(--panel);box-sizing:border-box;border:1px solid var(--glass-bd);border-radius:8px;z-index:1;"></div>
+  <div style="position:absolute;left:360px;top:236px;width:4px;height:90px;background:var(--acc);border-radius:8px 0 0 8px;z-index:2;"></div>
+  <div style="position:absolute;left:380px;top:252px;width:240px;font-size:13px;font-weight:600;color:var(--mut);line-height:1.2;text-align:left;z-index:3;">상반기 총입고</div>
+  <div style="position:absolute;left:380px;top:276px;width:240px;font-size:26px;font-weight:800;color:var(--ink);line-height:1.15;text-align:left;z-index:3;">134,923개</div>
+  <div data-ed-outline="1|var(--glass-bd)|solid" style="position:absolute;left:648px;top:236px;width:272px;height:90px;background:var(--panel);box-sizing:border-box;border:1px solid var(--glass-bd);border-radius:8px;z-index:1;"></div>
+  <div style="position:absolute;left:648px;top:236px;width:4px;height:90px;background:var(--acc);border-radius:8px 0 0 8px;z-index:2;"></div>
+  <div style="position:absolute;left:668px;top:252px;width:240px;font-size:13px;font-weight:600;color:var(--mut);line-height:1.2;text-align:left;z-index:3;">상반기 총출고</div>
+  <div style="position:absolute;left:668px;top:276px;width:240px;font-size:26px;font-weight:800;color:var(--ink);line-height:1.15;text-align:left;z-index:3;">130,802개</div>
+  <div data-ed-outline="1|var(--glass-bd)|solid" style="position:absolute;left:936px;top:236px;width:272px;height:90px;background:var(--panel);box-sizing:border-box;border:1px solid var(--glass-bd);border-radius:8px;z-index:1;"></div>
+  <div style="position:absolute;left:936px;top:236px;width:4px;height:90px;background:var(--coral);border-radius:8px 0 0 8px;z-index:2;"></div>
+  <div style="position:absolute;left:956px;top:252px;width:240px;font-size:13px;font-weight:600;color:var(--mut);line-height:1.2;text-align:left;z-index:3;">부족 품목</div>
+  <div style="position:absolute;left:956px;top:276px;width:240px;font-size:26px;font-weight:800;color:var(--coral);line-height:1.15;text-align:left;z-index:3;">8종 (28.6%)</div>
+  <div style="position:absolute;left:72px;top:370px;width:100px;font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">총입고</div>
+  <div style="position:absolute;left:182px;top:374px;width:836px;height:42px;background:rgba(255,255,255,.06);border-radius:5px;z-index:1;"></div>
+  <div data-anim-bar="1" style="position:absolute;left:182px;top:374px;width:836px;height:42px;background:var(--acc);border-radius:5px;z-index:2;"></div>
+  <div style="position:absolute;left:1030px;top:370px;width:180px;font-size:15px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">134,923개</div>
+  <div style="position:absolute;left:72px;top:434px;width:100px;font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">총출고</div>
+  <div style="position:absolute;left:182px;top:438px;width:836px;height:42px;background:rgba(255,255,255,.06);border-radius:5px;z-index:1;"></div>
+  <div data-anim-bar="1" style="position:absolute;left:182px;top:438px;width:810.5px;height:42px;background:var(--cool);border-radius:5px;z-index:2;"></div>
+  <div style="position:absolute;left:1004.5px;top:434px;width:180px;font-size:15px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">130,802개</div>
+</section>
+<section class="slide">
+  <div class="kicker" style="position:absolute;left:72px;top:60px;font-size:13.5px;font-weight:700;">분류 · 품목 (1/2)</div>
+  <h2 class="title" style="position:absolute;left:72px;top:112px;width:1136px;margin:0;">분류별 재고 구성</h2>
+  <div style="position:absolute;left:72px;top:172px;width:1136px;background:#111a2c;border-left:4px solid var(--acc);border-radius:4px;padding:15px 20px;font-size:18px;color:var(--gray);line-height:1.6;">6개 분류 중 <b style="color:var(--acc)">금속재 1개 분류가 전체 재고금액의 49.9%</b>를 차지합니다 — 재고자산이 가장 많이 묶여 있고, 관리 우선순위가 가장 높은 영역입니다.</div>
+  <div style="position:absolute;left:72px;top:236px;width:170px;font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">금속재</div>
+  <div style="position:absolute;left:72px;top:256px;width:170px;font-size:11.5px;font-weight:500;color:var(--mut);line-height:1.2;text-align:left;">품목 5종 · 부족 2종</div>
+  <div style="position:absolute;left:252px;top:240px;width:766px;height:40px;background:rgba(255,255,255,.06);border-radius:5px;z-index:1;"></div>
+  <div data-anim-bar="1" style="position:absolute;left:252px;top:240px;width:766px;height:40px;background:var(--acc);border-radius:5px;z-index:2;"></div>
+  <div style="position:absolute;left:1030px;top:236px;width:180px;font-size:15px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">29,072,800원</div>
+  <div style="position:absolute;left:72px;top:296px;width:170px;font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">수지/플라스틱</div>
+  <div style="position:absolute;left:72px;top:316px;width:170px;font-size:11.5px;font-weight:500;color:var(--mut);line-height:1.2;text-align:left;">품목 5종 · 부족 1종</div>
+  <div style="position:absolute;left:252px;top:300px;width:766px;height:40px;background:rgba(255,255,255,.06);border-radius:5px;z-index:1;"></div>
+  <div data-anim-bar="1" style="position:absolute;left:252px;top:300px;width:402.3px;height:40px;background:var(--cool);border-radius:5px;z-index:2;"></div>
+  <div style="position:absolute;left:666.3px;top:296px;width:180px;font-size:15px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">15,267,600원</div>
+  <div style="position:absolute;left:72px;top:356px;width:170px;font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">전자부품</div>
+  <div style="position:absolute;left:72px;top:376px;width:170px;font-size:11.5px;font-weight:500;color:var(--mut);line-height:1.2;text-align:left;">품목 5종 · 부족 2종</div>
+  <div style="position:absolute;left:252px;top:360px;width:766px;height:40px;background:rgba(255,255,255,.06);border-radius:5px;z-index:1;"></div>
+  <div data-anim-bar="1" style="position:absolute;left:252px;top:360px;width:141.8px;height:40px;background:var(--acc);border-radius:5px;z-index:2;"></div>
+  <div style="position:absolute;left:405.8px;top:356px;width:180px;font-size:15px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">5,383,440원</div>
+  <div style="position:absolute;left:72px;top:416px;width:170px;font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">소모재</div>
+  <div style="position:absolute;left:72px;top:436px;width:170px;font-size:11.5px;font-weight:500;color:var(--mut);line-height:1.2;text-align:left;">품목 4종 · 부족 1종</div>
+  <div style="position:absolute;left:252px;top:420px;width:766px;height:40px;background:rgba(255,255,255,.06);border-radius:5px;z-index:1;"></div>
+  <div data-anim-bar="1" style="position:absolute;left:252px;top:420px;width:106.7px;height:40px;background:var(--cool);border-radius:5px;z-index:2;"></div>
+  <div style="position:absolute;left:370.7px;top:416px;width:180px;font-size:15px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">4,051,480원</div>
+  <div style="position:absolute;left:72px;top:476px;width:170px;font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">고무/실리콘</div>
+  <div style="position:absolute;left:72px;top:496px;width:170px;font-size:11.5px;font-weight:500;color:var(--mut);line-height:1.2;text-align:left;">품목 4종 · 부족 1종</div>
+  <div style="position:absolute;left:252px;top:480px;width:766px;height:40px;background:rgba(255,255,255,.06);border-radius:5px;z-index:1;"></div>
+  <div data-anim-bar="1" style="position:absolute;left:252px;top:480px;width:74.2px;height:40px;background:var(--acc);border-radius:5px;z-index:2;"></div>
+  <div style="position:absolute;left:338.2px;top:476px;width:180px;font-size:15px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">2,814,780원</div>
+  <div style="position:absolute;left:72px;top:536px;width:170px;font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">체결부품</div>
+  <div style="position:absolute;left:72px;top:556px;width:170px;font-size:11.5px;font-weight:500;color:var(--mut);line-height:1.2;text-align:left;">품목 5종 · 부족 1종</div>
+  <div style="position:absolute;left:252px;top:540px;width:766px;height:40px;background:rgba(255,255,255,.06);border-radius:5px;z-index:1;"></div>
+  <div data-anim-bar="1" style="position:absolute;left:252px;top:540px;width:44.0px;height:40px;background:var(--cool);border-radius:5px;z-index:2;"></div>
+  <div style="position:absolute;left:308.0px;top:536px;width:180px;font-size:15px;font-weight:700;color:var(--ink);line-height:1.2;text-align:left;">1,670,915원</div>
+</section>
+<section class="slide">
+  <div class="kicker" style="position:absolute;left:72px;top:60px;font-size:13.5px;font-weight:700;">분류 · 품목 (2/2)</div>
+  <h2 class="title" style="position:absolute;left:72px;top:112px;width:1136px;margin:0;">품목별 TOP7 · 재고 집중도</h2>
+  <div style="position:absolute;left:72px;top:172px;width:1136px;background:#111a2c;border-left:4px solid var(--acc);border-radius:4px;padding:15px 20px;font-size:18px;color:var(--gray);line-height:1.6;">재고금액 상위 <b style="color:var(--acc)">7개 품목(전체 28종 중 25%)</b>이 전체 재고금액의 63.5%를 차지 — 소수 고가 품목에 재고자산이 집중돼 있고, 이 중 2개는 이미 안전재고 미달입니다.</div>
+  <div style="position:absolute;left:72px;top:236px;width:1136px;height:28px;background:var(--code);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:242px;width:56px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">순위</div>
+  <div style="position:absolute;left:152px;top:242px;width:96px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">자재코드</div>
+  <div style="position:absolute;left:262px;top:242px;width:306px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">자재명</div>
+  <div style="position:absolute;left:582px;top:242px;width:186px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">재고금액</div>
+  <div style="position:absolute;left:782px;top:242px;width:86px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">상태</div>
+  <div style="position:absolute;left:72px;top:264px;width:1136px;height:38px;background:transparent;border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:271px;width:56px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">1</div>
+  <div style="position:absolute;left:152px;top:271px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">MET-001</div>
+  <div style="position:absolute;left:262px;top:271px;width:306px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">냉연강판 SPCC 1.0T</div>
+  <div style="position:absolute;left:582px;top:271px;width:186px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">7,986,800원</div>
+  <div style="position:absolute;left:782px;top:271px;width:86px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;"><span style="display:inline-flex;align-items:center;gap:5px;padding:2px 11px;border-radius:20px;font-size:12px;font-weight:700;color:#0ca30c;background:rgba(12,163,12,.14);">정상</span></div>
+  <div style="position:absolute;left:72px;top:302px;width:1136px;height:38px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:309px;width:56px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">2</div>
+  <div style="position:absolute;left:152px;top:309px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">MET-003</div>
+  <div style="position:absolute;left:262px;top:309px;width:306px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">스테인리스봉 SUS304</div>
+  <div style="position:absolute;left:582px;top:309px;width:186px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">7,154,000원</div>
+  <div style="position:absolute;left:782px;top:309px;width:86px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;"><span style="display:inline-flex;align-items:center;gap:5px;padding:2px 11px;border-radius:20px;font-size:12px;font-weight:700;color:#0ca30c;background:rgba(12,163,12,.14);">정상</span></div>
+  <div style="position:absolute;left:72px;top:340px;width:1136px;height:38px;background:transparent;border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:347px;width:56px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">3</div>
+  <div style="position:absolute;left:152px;top:347px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">MET-002</div>
+  <div style="position:absolute;left:262px;top:347px;width:306px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">알루미늄 판재 5052</div>
+  <div style="position:absolute;left:582px;top:347px;width:186px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">5,335,200원</div>
+  <div style="position:absolute;left:782px;top:347px;width:86px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;"><span style="display:inline-flex;align-items:center;gap:5px;padding:2px 11px;border-radius:20px;font-size:12px;font-weight:700;color:var(--acc);background:rgba(var(--acc-rgb),.14);">부족</span></div>
+  <div style="position:absolute;left:72px;top:378px;width:1136px;height:38px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:385px;width:56px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">4</div>
+  <div style="position:absolute;left:152px;top:385px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">MET-004</div>
+  <div style="position:absolute;left:262px;top:385px;width:306px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">황동 파이프 15A</div>
+  <div style="position:absolute;left:582px;top:385px;width:186px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">4,867,200원</div>
+  <div style="position:absolute;left:782px;top:385px;width:86px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;"><span style="display:inline-flex;align-items:center;gap:5px;padding:2px 11px;border-radius:20px;font-size:12px;font-weight:700;color:var(--acc);background:rgba(var(--acc-rgb),.14);">부족</span></div>
+  <div style="position:absolute;left:72px;top:416px;width:1136px;height:38px;background:transparent;border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:423px;width:56px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">5</div>
+  <div style="position:absolute;left:152px;top:423px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">RES-001</div>
+  <div style="position:absolute;left:262px;top:423px;width:306px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">ABS 원료 펠릿</div>
+  <div style="position:absolute;left:582px;top:423px;width:186px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">4,406,400원</div>
+  <div style="position:absolute;left:782px;top:423px;width:86px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;"><span style="display:inline-flex;align-items:center;gap:5px;padding:2px 11px;border-radius:20px;font-size:12px;font-weight:700;color:#0ca30c;background:rgba(12,163,12,.14);">정상</span></div>
+  <div style="position:absolute;left:72px;top:454px;width:1136px;height:38px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:461px;width:56px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">6</div>
+  <div style="position:absolute;left:152px;top:461px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">MET-005</div>
+  <div style="position:absolute;left:262px;top:461px;width:306px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">아연도금 강관</div>
+  <div style="position:absolute;left:582px;top:461px;width:186px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">3,729,600원</div>
+  <div style="position:absolute;left:782px;top:461px;width:86px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;"><span style="display:inline-flex;align-items:center;gap:5px;padding:2px 11px;border-radius:20px;font-size:12px;font-weight:700;color:#0ca30c;background:rgba(12,163,12,.14);">정상</span></div>
+  <div style="position:absolute;left:72px;top:492px;width:1136px;height:38px;background:transparent;border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:499px;width:56px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">7</div>
+  <div style="position:absolute;left:152px;top:499px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">RES-003</div>
+  <div style="position:absolute;left:262px;top:499px;width:306px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">PVC 시트 3T</div>
+  <div style="position:absolute;left:582px;top:499px;width:186px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">3,495,300원</div>
+  <div style="position:absolute;left:782px;top:499px;width:86px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;"><span style="display:inline-flex;align-items:center;gap:5px;padding:2px 11px;border-radius:20px;font-size:12px;font-weight:700;color:#0ca30c;background:rgba(12,163,12,.14);">정상</span></div>
+</section>
+<section class="slide">
+  <div class="kicker" style="position:absolute;left:72px;top:60px;font-size:13.5px;font-weight:700;">TREND</div>
+  <h2 class="title" style="position:absolute;left:72px;top:112px;width:1136px;margin:0;">월별 입·출고 추이 (2026년 1~6월)</h2>
+  <div style="position:absolute;left:72px;top:172px;width:1136px;background:#111a2c;border-left:4px solid var(--acc);border-radius:4px;padding:15px 20px;font-size:18px;color:var(--gray);line-height:1.6;">6개월 중 <b style="color:var(--acc)">1월을 제외한 5개월 모두 입고가 출고를 초과</b>했고, <b style="color:var(--acc)">4월에 순증감이 가장 컸습니다(+1,502)</b>.</div>
+  <div data-anim-linechart="1" style="position:absolute;left:72px;top:236px;width:1136px;height:214px;z-index:1;"><svg viewBox="0 0 1000 300" style="width:100%;height:100%;display:block">
+<text x="60.0" y="292" font-size="12" fill="var(--mut)" text-anchor="middle">1월</text>
+<text x="244.0" y="292" font-size="12" fill="var(--mut)" text-anchor="middle">2월</text>
+<text x="428.0" y="292" font-size="12" fill="var(--mut)" text-anchor="middle">3월</text>
+<text x="612.0" y="292" font-size="12" fill="var(--mut)" text-anchor="middle">4월</text>
+<text x="796.0" y="292" font-size="12" fill="var(--mut)" text-anchor="middle">5월</text>
+<text x="980.0" y="292" font-size="12" fill="var(--mut)" text-anchor="middle">6월</text>
+<polyline points="60.0,163.4 244.0,141.7 428.0,114.5 612.0,66.9 796.0,144.4 980.0,188.4" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
+<circle cx="60.0" cy="163.4" r="4" fill="var(--acc)"></circle>
+<circle cx="244.0" cy="141.7" r="4" fill="var(--acc)"></circle>
+<circle cx="428.0" cy="114.5" r="4" fill="var(--acc)"></circle>
+<circle cx="612.0" cy="66.9" r="4" fill="var(--acc)"></circle>
+<circle cx="796.0" cy="144.4" r="4" fill="var(--acc)"></circle>
+<circle cx="980.0" cy="188.4" r="4" fill="var(--acc)"></circle>
+<polyline points="60.0,151.5 244.0,223.1 428.0,202.1 612.0,194.2 796.0,184.5 980.0,213.3" fill="none" stroke="var(--cool)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
+<circle cx="60.0" cy="151.5" r="4" fill="var(--cool)"></circle>
+<circle cx="244.0" cy="223.1" r="4" fill="var(--cool)"></circle>
+<circle cx="428.0" cy="202.1" r="4" fill="var(--cool)"></circle>
+<circle cx="612.0" cy="194.2" r="4" fill="var(--cool)"></circle>
+<circle cx="796.0" cy="184.5" r="4" fill="var(--cool)"></circle>
+<circle cx="980.0" cy="213.3" r="4" fill="var(--cool)"></circle>
+<line x1="790" y1="8" x2="808" y2="8" stroke="var(--acc)" stroke-width="3" stroke-linecap="round"></line>
+<circle cx="799" cy="8" r="3.5" fill="var(--acc)"></circle>
+<text x="816" y="13" font-size="12.5" font-weight="600" fill="var(--ink)">입고</text>
+<line x1="885" y1="8" x2="903" y2="8" stroke="var(--cool)" stroke-width="3" stroke-linecap="round"></line>
+<circle cx="894" cy="8" r="3.5" fill="var(--cool)"></circle>
+<text x="911" y="13" font-size="12.5" font-weight="600" fill="var(--ink)">출고</text>
+</svg></div>
+  <div style="position:absolute;left:72px;top:470px;width:1136px;height:22px;background:var(--code);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:476px;width:270px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">월</div>
+  <div style="position:absolute;left:366px;top:476px;width:270px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">입고</div>
+  <div style="position:absolute;left:650px;top:476px;width:270px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">출고</div>
+  <div style="position:absolute;left:934px;top:476px;width:270px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">순증감</div>
+  <div style="position:absolute;left:72px;top:492px;width:1136px;height:22px;background:transparent;border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:499px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">1월</div>
+  <div style="position:absolute;left:366px;top:499px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">22,170</div>
+  <div style="position:absolute;left:650px;top:499px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">22,311</div>
+  <div style="position:absolute;left:934px;top:499px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">-141</div>
+  <div style="position:absolute;left:72px;top:514px;width:1136px;height:22px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:521px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">2월</div>
+  <div style="position:absolute;left:366px;top:521px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">22,427</div>
+  <div style="position:absolute;left:650px;top:521px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">21,466</div>
+  <div style="position:absolute;left:934px;top:521px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">+961</div>
+  <div style="position:absolute;left:72px;top:536px;width:1136px;height:22px;background:transparent;border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:543px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">3월</div>
+  <div style="position:absolute;left:366px;top:543px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">22,747</div>
+  <div style="position:absolute;left:650px;top:543px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">21,714</div>
+  <div style="position:absolute;left:934px;top:543px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">+1,033</div>
+  <div style="position:absolute;left:72px;top:558px;width:1136px;height:22px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:565px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">4월</div>
+  <div style="position:absolute;left:366px;top:565px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">23,309</div>
+  <div style="position:absolute;left:650px;top:565px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">21,807</div>
+  <div style="position:absolute;left:934px;top:565px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">+1,502</div>
+  <div style="position:absolute;left:72px;top:580px;width:1136px;height:22px;background:transparent;border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:587px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">5월</div>
+  <div style="position:absolute;left:366px;top:587px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">22,395</div>
+  <div style="position:absolute;left:650px;top:587px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">21,922</div>
+  <div style="position:absolute;left:934px;top:587px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">+473</div>
+  <div style="position:absolute;left:72px;top:602px;width:1136px;height:22px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:609px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">6월</div>
+  <div style="position:absolute;left:366px;top:609px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">21,875</div>
+  <div style="position:absolute;left:650px;top:609px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">21,582</div>
+  <div style="position:absolute;left:934px;top:609px;width:270px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">+293</div>
+</section>
+<section class="slide" data-spot="" data-spot-rt="1">
+  <div class="kicker" style="position:absolute;left:72px;top:60px;font-size:13.5px;font-weight:700;">RISK</div>
+  <h2 class="title" style="position:absolute;left:72px;top:112px;width:1136px;margin:0;">재고 부족 위험 — 안전재고 미달 8개 품목</h2>
+  <div style="position:absolute;left:72px;top:172px;width:1136px;background:#111a2c;border-left:4px solid var(--acc);border-radius:4px;padding:15px 20px;font-size:18px;color:var(--gray);line-height:1.6;">부족량 1위는 <b style="color:var(--acc)">세라믹 콘덴서(전자부품, 3,374개 부족)</b>이며, 전자부품 계열 2개 품목이 부족 상위 3위 안에 포함돼 <b style="color:var(--acc)">조달 우선순위 1순위</b>입니다.</div>
+  <div style="position:absolute;left:72px;top:236px;width:1136px;height:28px;background:var(--code);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:242px;width:46px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">순위</div>
+  <div style="position:absolute;left:142px;top:242px;width:86px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">자재코드</div>
+  <div style="position:absolute;left:242px;top:242px;width:206px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">자재명</div>
+  <div style="position:absolute;left:462px;top:242px;width:116px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">분류</div>
+  <div style="position:absolute;left:592px;top:242px;width:96px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">기말재고</div>
+  <div style="position:absolute;left:702px;top:242px;width:96px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">안전재고</div>
+  <div style="position:absolute;left:812px;top:242px;width:96px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">부족량</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:72px;top:264px;width:1136px;height:34px;background:rgba(var(--cool-rgb),.22);border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:82px;top:271px;width:46px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">1</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:142px;top:271px;width:86px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">ELE-002</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:242px;top:271px;width:206px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">세라믹 콘덴서 104</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:462px;top:271px;width:116px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">전자부품</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:592px;top:271px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">15,411</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:702px;top:271px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">18,785</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:812px;top:271px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">3,374</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:72px;top:298px;width:1136px;height:34px;background:rgba(var(--cool-rgb),.22);border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:82px;top:305px;width:46px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">2</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:142px;top:305px;width:86px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">FAS-004</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:242px;top:305px;width:206px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">셀프태핑나사 4x16</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:462px;top:305px;width:116px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">체결부품</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:592px;top:305px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">6,024</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:702px;top:305px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">7,733</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:812px;top:305px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">1,709</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:72px;top:332px;width:1136px;height:34px;background:rgba(var(--cool-rgb),.22);border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:82px;top:339px;width:46px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">3</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:142px;top:339px;width:86px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">ELE-004</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:242px;top:339px;width:206px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">커넥터 JST-XH 4P</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:462px;top:339px;width:116px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">전자부품</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:592px;top:339px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">2,196</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:702px;top:339px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">2,816</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:812px;top:339px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">620</div>
+  <div style="position:absolute;left:72px;top:366px;width:1136px;height:34px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:373px;width:46px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">4</div>
+  <div style="position:absolute;left:142px;top:373px;width:86px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">RUB-002</div>
+  <div style="position:absolute;left:242px;top:373px;width:206px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">실리콘 패킹 30mm</div>
+  <div style="position:absolute;left:462px;top:373px;width:116px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">고무/실리콘</div>
+  <div style="position:absolute;left:592px;top:373px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">1,634</div>
+  <div style="position:absolute;left:702px;top:373px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">2,183</div>
+  <div style="position:absolute;left:812px;top:373px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">549</div>
+  <div style="position:absolute;left:72px;top:400px;width:1136px;height:34px;background:transparent;border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:407px;width:46px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">5</div>
+  <div style="position:absolute;left:142px;top:407px;width:86px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">MET-002</div>
+  <div style="position:absolute;left:242px;top:407px;width:206px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">알루미늄 판재 5052</div>
+  <div style="position:absolute;left:462px;top:407px;width:116px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">금속재</div>
+  <div style="position:absolute;left:592px;top:407px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">342</div>
+  <div style="position:absolute;left:702px;top:407px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">461</div>
+  <div style="position:absolute;left:812px;top:407px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">119</div>
+  <div style="position:absolute;left:72px;top:434px;width:1136px;height:34px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:441px;width:46px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">6</div>
+  <div style="position:absolute;left:142px;top:441px;width:86px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">RES-004</div>
+  <div style="position:absolute;left:242px;top:441px;width:206px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">POM 봉재</div>
+  <div style="position:absolute;left:462px;top:441px;width:116px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">수지/플라스틱</div>
+  <div style="position:absolute;left:592px;top:441px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">215</div>
+  <div style="position:absolute;left:702px;top:441px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">262</div>
+  <div style="position:absolute;left:812px;top:441px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">47</div>
+  <div style="position:absolute;left:72px;top:468px;width:1136px;height:34px;background:transparent;border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:475px;width:46px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">7</div>
+  <div style="position:absolute;left:142px;top:475px;width:86px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">CON-003</div>
+  <div style="position:absolute;left:242px;top:475px;width:206px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">방청유 스프레이</div>
+  <div style="position:absolute;left:462px;top:475px;width:116px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">소모재</div>
+  <div style="position:absolute;left:592px;top:475px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">212</div>
+  <div style="position:absolute;left:702px;top:475px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">245</div>
+  <div style="position:absolute;left:812px;top:475px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">33</div>
+  <div style="position:absolute;left:72px;top:502px;width:1136px;height:34px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--glass-bd);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:509px;width:46px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">8</div>
+  <div style="position:absolute;left:142px;top:509px;width:86px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">MET-004</div>
+  <div style="position:absolute;left:242px;top:509px;width:206px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">황동 파이프 15A</div>
+  <div style="position:absolute;left:462px;top:509px;width:116px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">금속재</div>
+  <div style="position:absolute;left:592px;top:509px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">144</div>
+  <div style="position:absolute;left:702px;top:509px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">176</div>
+  <div style="position:absolute;left:812px;top:509px;width:96px;font-size:14px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">32</div>
+</section>
+<section class="slide">
+  <div class="kicker" style="position:absolute;left:72px;top:60px;font-size:13.5px;font-weight:700;">CONCLUSION</div>
+  <h2 class="title" style="position:absolute;left:72px;top:112px;width:1136px;margin:0;">결론</h2>
+  <div style="position:absolute;left:72px;top:172px;width:1136px;background:#111a2c;border-left:4px solid var(--acc);border-radius:4px;padding:15px 20px;font-size:18px;color:var(--gray);line-height:1.6;"><b style="color:var(--acc)">"양은 문제 없으나 구성은 리스크가 있다"</b> — 이번 상반기의 결론입니다.</div>
+  <div data-ed-outline="1|var(--glass-bd)|solid" style="position:absolute;left:72px;top:250px;width:1136px;height:74px;background:var(--panel);box-sizing:border-box;border:1px solid var(--glass-bd);border-radius:10px;z-index:1;"></div>
+  <div style="position:absolute;left:88px;top:272px;width:30px;height:30px;background:var(--acc);border-radius:50%;z-index:2;"><div style="width:100%;text-align:center;line-height:30px;font-size:14px;font-weight:700;color:#1a1206;">1</div></div>
+  <div style="position:absolute;left:134px;top:264px;width:1046px;font-size:17px;font-weight:500;color:var(--ink);line-height:1.5;text-align:left;z-index:3;">전체 재고 수준은 <b style="color:var(--acc)">안정적입니다</b> — 상반기 순증감 <b style="color:var(--acc)">+4,121개</b>로 입고가 출고를 소폭 상회했습니다.</div>
+  <div data-ed-outline="1|var(--glass-bd)|solid" style="position:absolute;left:72px;top:340px;width:1136px;height:74px;background:var(--panel);box-sizing:border-box;border:1px solid var(--glass-bd);border-radius:10px;z-index:1;"></div>
+  <div style="position:absolute;left:88px;top:362px;width:30px;height:30px;background:var(--acc);border-radius:50%;z-index:2;"><div style="width:100%;text-align:center;line-height:30px;font-size:14px;font-weight:700;color:#1a1206;">2</div></div>
+  <div style="position:absolute;left:134px;top:354px;width:1046px;font-size:17px;font-weight:500;color:var(--ink);line-height:1.5;text-align:left;z-index:3;">재고자산은 소수 고가 품목에 집중돼 있습니다 — 상위 7개 품목(25%)이 재고금액의 <b style="color:var(--acc)">63.5%</b>를 차지하며, 금속재 한 분류가 <b style="color:var(--acc)">49.9%</b>를 차지합니다.</div>
+  <div data-ed-outline="1|var(--glass-bd)|solid" style="position:absolute;left:72px;top:430px;width:1136px;height:74px;background:var(--panel);box-sizing:border-box;border:1px solid var(--glass-bd);border-radius:10px;z-index:1;"></div>
+  <div style="position:absolute;left:88px;top:452px;width:30px;height:30px;background:var(--acc);border-radius:50%;z-index:2;"><div style="width:100%;text-align:center;line-height:30px;font-size:14px;font-weight:700;color:#1a1206;">3</div></div>
+  <div style="position:absolute;left:134px;top:444px;width:1046px;font-size:17px;font-weight:500;color:var(--ink);line-height:1.5;text-align:left;z-index:3;">8개 품목(28.6%)이 <b style="color:var(--acc)">안전재고 미달입니다</b> — 전자부품 2종을 포함해 <b style="color:var(--acc)">즉시 조달 검토가 필요합니다</b>.</div>
+</section>
+<section class="slide" data-spot="" data-spot-rt="1">
+  <div class="kicker" style="position:absolute;left:72px;top:60px;font-size:13.5px;font-weight:700;">ACTION ITEMS</div>
+  <h2 class="title" style="position:absolute;left:72px;top:112px;width:1136px;margin:0;">제안</h2>
+  <div style="position:absolute;left:72px;top:172px;width:1136px;background:#111a2c;border-left:4px solid var(--acc);border-radius:4px;padding:15px 20px;font-size:18px;color:var(--gray);line-height:1.6;">부족 상위 4개 품목은 <b style="color:var(--acc)">이번 주 긴급 발주</b>, 저회전 고금액 품목은 <b style="color:var(--acc)">다음 분기 재고 효율화 검토</b> 대상으로 분리해 관리할 것을 제안합니다.</div>
+  <div style="position:absolute;left:72px;top:236px;width:1136px;height:28px;background:var(--code);z-index:1;"></div>
+  <div style="position:absolute;left:82px;top:242px;width:136px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">구분</div>
+  <div style="position:absolute;left:232px;top:242px;width:702px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">대상 자재 · 근거 수치</div>
+  <div style="position:absolute;left:948px;top:242px;width:126px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">담당자</div>
+  <div style="position:absolute;left:1088px;top:242px;width:116px;font-size:11.5px;font-weight:700;color:var(--acc);line-height:1.2;text-align:left;z-index:2;">기한</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:72px;top:264px;width:1136px;height:72px;background:transparent;border-bottom:1px solid var(--glass-bd);z-index:1;--fs-scale:1.28;"></div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:82px;top:271px;width:136px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;--fs-scale:1.28;z-index:2;"><span style="display:inline-flex;align-items:center;gap:5px;padding:2px 11px;border-radius:20px;font-size:12px;font-weight:700;color:var(--acc);background:rgba(var(--acc-rgb),.14);">긴급 발주</span></div>
+  <div class="spotitem spot-noscale" data-spot-n="0" style="position:absolute;left:232px;top:271px;width:702px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">부족량 상위 4개 — <b style="color:var(--cool)">세라믹 콘덴서</b>(3,374개↓) · <b style="color:var(--cool)">셀프태핑나사</b>(1,709개↓) · <b style="color:var(--cool)">커넥터 JST-XH 4P</b>(620개↓) · <b style="color:var(--cool)">실리콘 패킹</b>(549개↓)</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:948px;top:271px;width:126px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;--fs-scale:1.28;z-index:2;">구매팀</div>
+  <div class="spotitem" data-spot-n="0" style="position:absolute;left:1088px;top:271px;width:116px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;--fs-scale:1.28;z-index:2;">8/15(금)까지</div>
+  <div class="spotitem" data-spot-n="1" style="position:absolute;left:72px;top:336px;width:1136px;height:72px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--glass-bd);z-index:1;--fs-scale:1.28;"></div>
+  <div class="spotitem" data-spot-n="1" style="position:absolute;left:82px;top:343px;width:136px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;--fs-scale:1.28;z-index:2;"><span style="display:inline-flex;align-items:center;gap:5px;padding:2px 11px;border-radius:20px;font-size:12px;font-weight:700;color:var(--acc);background:rgba(var(--acc-rgb),.14);">금액 리스크 재점검</span></div>
+  <div class="spotitem spot-noscale" data-spot-n="1" style="position:absolute;left:232px;top:343px;width:702px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">TOP7 중 부족 2종 — <b style="color:var(--cool)">알루미늄 판재</b>(재고금액 5,335,200원), <b style="color:var(--cool)">황동 파이프</b>(재고금액 4,867,200원) : 안전재고 수준 재산정 검토</div>
+  <div class="spotitem" data-spot-n="1" style="position:absolute;left:948px;top:343px;width:126px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;--fs-scale:1.28;z-index:2;">자재관리팀</div>
+  <div class="spotitem" data-spot-n="1" style="position:absolute;left:1088px;top:343px;width:116px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;--fs-scale:1.28;z-index:2;">8/22(금)까지</div>
+  <div class="spotitem" data-spot-n="2" style="position:absolute;left:72px;top:408px;width:1136px;height:72px;background:transparent;border-bottom:1px solid var(--glass-bd);z-index:1;--fs-scale:1.28;"></div>
+  <div class="spotitem" data-spot-n="2" style="position:absolute;left:82px;top:415px;width:136px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;--fs-scale:1.28;z-index:2;"><span style="display:inline-flex;align-items:center;gap:5px;padding:2px 11px;border-radius:20px;font-size:12px;font-weight:700;color:var(--acc);background:rgba(var(--acc-rgb),.14);">재고 효율화 검토</span></div>
+  <div class="spotitem spot-noscale" data-spot-n="2" style="position:absolute;left:232px;top:415px;width:702px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">저회전 고금액 — <b style="color:var(--cool)">냉연강판 SPCC</b>(회전배수 1.23배, 7,986,800원) · <b style="color:var(--cool)">PP 원료 펠릿</b>(1.21배, 3,308,900원) · <b style="color:var(--cool)">SMD 저항 1206</b>(1.18배, 955,260원) 과잉재고 여부 재검토</div>
+  <div class="spotitem" data-spot-n="2" style="position:absolute;left:948px;top:415px;width:126px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;--fs-scale:1.28;z-index:2;">생산관리팀</div>
+  <div class="spotitem" data-spot-n="2" style="position:absolute;left:1088px;top:415px;width:116px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;--fs-scale:1.28;z-index:2;">3분기 중</div>
+  <div class="spotitem" data-spot-n="3" style="position:absolute;left:72px;top:480px;width:1136px;height:72px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--glass-bd);z-index:1;--fs-scale:1.28;"></div>
+  <div class="spotitem" data-spot-n="3" style="position:absolute;left:82px;top:487px;width:136px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;--fs-scale:1.28;z-index:2;"><span style="display:inline-flex;align-items:center;gap:5px;padding:2px 11px;border-radius:20px;font-size:12px;font-weight:700;color:var(--acc);background:rgba(var(--acc-rgb),.14);">운영 개선</span></div>
+  <div class="spotitem spot-noscale" data-spot-n="3" style="position:absolute;left:232px;top:487px;width:702px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;z-index:2;">분류별 재고 비중 격차(<b style="color:var(--cool)">금속재</b> 49.9% vs <b style="color:var(--cool)">체결부품</b> 2.9%) 반영 — 분류별 발주주기 · 안전재고 기준 차등화 검토</div>
+  <div class="spotitem" data-spot-n="3" style="position:absolute;left:948px;top:487px;width:126px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;--fs-scale:1.28;z-index:2;">SCM팀</div>
+  <div class="spotitem" data-spot-n="3" style="position:absolute;left:1088px;top:487px;width:116px;font-size:16px;font-weight:500;color:var(--ink);line-height:1.2;text-align:left;word-break:keep-all;--fs-scale:1.28;z-index:2;">8월 말까지</div>
+</section>
+</div></div>
+<div id="nav">
+  <button id="prev" aria-label="이전">‹</button>
+  <span class="cnt"><span id="cur">1</span> / <span id="tot">9</span></span>
+  <button id="next" aria-label="다음">›</button>
+</div>
+<script>
+  // 브랜딩 크롬 자동 주입 (로고·푸터 — 수동 삽입 금지, §8-1 · ★멱등: 이미 주입된 슬라이드는 스킵 — 편집툴 저장본 재오픈 시 중복 방지, 26.07.10)
+  document.querySelectorAll('.slide').forEach(function(s){
+  });
+  var slides=[].slice.call(document.querySelectorAll('.slide')), i=0, fs=-1;
+  document.getElementById('tot').textContent=slides.length;
+  function fsteps(){ return [].slice.call(slides[i].querySelectorAll('[data-fs]'))
+    .sort(function(a,b){return (+a.dataset.fs)-(+b.dataset.fs)}); }
+  function paintFs(){ fsteps().forEach(function(el,k){
+    el.classList.remove('fs-focus','fs-dim');
+    if(fs>=0) el.classList.add(k===fs?'fs-focus':'fs-dim'); }); }
+  function show(n){ i=(n+slides.length)%slides.length; fs=-1;
+    slides.forEach(function(s,k){s.classList.toggle('on',k===i)});
+    paintFs(); document.getElementById('cur').textContent=i+1; }
+  function fwd(){ var st=fsteps(); if(st.length&&fs<st.length-1){fs++;paintFs();} else show(i+1); }
+  function back(){ var st=fsteps(); if(st.length&&fs>=0){fs--;paintFs();} else show(i-1); }
+  document.getElementById('next').onclick=fwd;
+  document.getElementById('prev').onclick=back;
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ')fwd();
+    if(e.key==='ArrowLeft'||e.key==='PageUp')back();
+  });
+  function fit(){ var s=document.getElementById('stage');
+    var w=window.innerWidth||1280, h=window.innerHeight||720;
+    var sc=Math.min((w-40)/1280,(h-80)/720);
+    if(!isFinite(sc)||sc<=0) return;
+    sc=Math.max(0.2,Math.min(sc,1.4));
+    s.style.transform='scale('+sc+')'; }
+  window.addEventListener('resize',fit); fit();
+  /* ★26.08.04 런타임 결함 2건 수정(입문반 앱표준 재제작 실측 · 대표 지적) — 둘 다 원본 덱엔 있던 표준 동작인데 셸에 누락돼 있었다.
+     ①초기 표시: show(0) 호출이 없어 덱을 열면 .slide.on 이 0개 = **빈 화면**. 방향키를 눌러야 2장부터 보였다.
+     ②링크: [data-href] 클릭 핸들러가 없어 링크를 심어도 눌리지 않았다(엔진은 '저장 시' <a>로 감싸므로 저장 전엔 무동작).
+       편집 중(__ed_editing)에는 발동하지 않는다 — 편집기 선택 동작과 충돌 방지. */
+  show(0);
+  document.addEventListener('click',function(e){
+    if(document.body.classList.contains('__ed_editing'))return;
+    var el=e.target&&e.target.closest&&e.target.closest('[data-href]');
+    if(el){e.preventDefault();window.open(el.getAttribute('data-href'),'_blank','noopener');}
+  });
+</script>
+
+<script>
+(function(){
+  var _origShow = window.show;
+  function animateBars(root){
+    root.querySelectorAll('[data-anim-bar]').forEach(function(b,i){
+      var target = b.style.width;
+      b.style.transition = 'none';
+      b.style.width = '0px';
+      void b.offsetWidth;
+      setTimeout(function(){
+        b.style.transition = 'width .85s cubic-bezier(.22,.9,.25,1)';
+        b.style.width = target;
+      }, 260 + i*90);
+    });
+  }
+  function animateLines(root){
+    root.querySelectorAll('[data-anim-linechart] polyline').forEach(function(pl,i){
+      var len = 0;
+      try { len = pl.getTotalLength(); } catch(e){ return; }
+      pl.style.transition = 'none';
+      pl.style.strokeDasharray = len;
+      pl.style.strokeDashoffset = len;
+      void pl.getBoundingClientRect();
+      setTimeout(function(){
+        pl.style.transition = 'stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)';
+        pl.style.strokeDashoffset = '0';
+      }, 200 + i*160);
+    });
+    root.querySelectorAll('[data-anim-linechart] circle').forEach(function(c,i){
+      c.style.transformBox = 'fill-box';
+      c.style.transformOrigin = 'center';
+      c.style.transition = 'none';
+      c.style.transform = 'scale(0)';
+      void c.getBoundingClientRect();
+      setTimeout(function(){
+        c.style.transition = 'transform .4s cubic-bezier(.34,1.56,.64,1)';
+        c.style.transform = 'scale(1)';
+      }, 950 + i*45);
+    });
+  }
+  function animateEntrance(slide){
+    var kids = Array.prototype.slice.call(slide.children);
+    // 요소 수와 무관하게 전체 stagger가 대략 650ms 안에 끝나도록(표 많은 슬라이드가 너무 느려지지 않게)
+    var step = Math.min(70, Math.max(8, 650 / kids.length));
+    kids.forEach(function(el,i){
+      el.style.animation = 'none';
+      void el.offsetWidth;
+      el.style.animation = 'revealUp .55s cubic-bezier(.22,.9,.25,1) ' + (i*step) + 'ms both';
+      // ★애니메이션이 transform을 계속 점유하면 스포트라이트의 transform:scale(강조 확대)이 안 먹힘
+      //   (CSS Animations는 !important보다도 우선순위가 높음, 대표 지적 26.08.08 실측 발견) → 끝나면 즉시 반납.
+      el.addEventListener('animationend', function handler(){
+        el.style.animation = '';
+        el.removeEventListener('animationend', handler);
+      });
+    });
+  }
+  function playSlide(n){
+    var slide = document.querySelectorAll('.slide')[n];
+    if(!slide) return;
+    animateEntrance(slide);
+    animateBars(slide);
+    animateLines(slide);
+  }
+  window.show = function(n){
+    _origShow(n);
+    requestAnimationFrame(function(){ playSlide(n); });
+  };
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(function(){
+      var slides = document.querySelectorAll('.slide');
+      var onIdx = Array.prototype.indexOf.call(slides, document.querySelector('.slide.on'));
+      if (onIdx >= 0) playSlide(onIdx);
+    }, 50);
+  });
+})();
+</script>
+
+
+<script id="__ed_spot_rt">(function(){
+  function ed(){ if(!window.__slideEditor)return false; if(window.__edPreview)return false;
+    try{ if(document.querySelector('.__ed_sel'))return true;
+      var a=document.activeElement; if(a&&a.tagName&&(/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)||a.isContentEditable))return true;
+    }catch(e){} return false }
+  function curSpot(){ var s=document.querySelector('.slide.on'); if(!s)return null;
+    if(s.getAttribute('data-spot-rt')==='1'&&s.querySelector('.spotitem'))return s;
+    return s.querySelector('[data-spot][data-spot-rt=\"1\"]') }
+  function spotItems(sp){ var it=[].slice.call(sp.querySelectorAll('.spotitem'));
+    var hasN=false; for(var i=0;i<it.length;i++){ if(it[i].hasAttribute('data-spot-n')){hasN=true;break} }
+    if(hasN)it.sort(function(a,b){ var x=parseInt(a.getAttribute('data-spot-n'),10); var y=parseInt(b.getAttribute('data-spot-n'),10);
+      return (isNaN(x)?9999:x)-(isNaN(y)?9999:y) });
+    return it }
+  function spotGroups(sp){ var it=spotItems(sp); var gs=[],map={};
+    for(var i=0;i<it.length;i++){ var n=it[i].getAttribute('data-spot-n');
+      var key=(n===null||n==='')?('__i'+i):('n'+n);
+      if(!(key in map)){map[key]=gs.length; gs.push([])}
+      gs[map[key]].push(it[i]); }
+    return gs }
+  function vplay(v){ if(!v)return; try{v.currentTime=0; v.play&&v.play()}catch(e){} }
+  function vstop(v){ if(!v)return; try{v.pause&&v.pause(); v.currentTime=0}catch(e){} }
+  function setFocus(spot,idx){ spot.setAttribute('data-focus',idx);
+    var gs=spotGroups(spot);
+    for(var k=0;k<gs.length;k++){ var on=(idx>=0&&k===idx);
+      for(var j=0;j<gs[k].length;j++){ var el=gs[k][j];
+      el.classList.toggle('spot-on',on);
+      el.classList.toggle('spot-off',idx>=0&&!on);
+      var v=el.tagName==='VIDEO'?el:(el.querySelector&&el.querySelector('video'));
+      if(v){ if(on)vplay(v); else vstop(v); } } }
+    var s=(spot.closest&&spot.closest('.slide'))||document.querySelector('.slide.on');
+    if(s){ var fno=idx>=0?(idx+1):-1;
+      [].forEach.call(s.querySelectorAll('[data-for]'),function(m){
+        var mn=parseInt(m.getAttribute('data-for'),10), hit=(mn===fno);
+        if(m.tagName==='VIDEO'){ if(hit)vplay(m); else vstop(m); }
+        m.classList.toggle('fs-on',hit); }); } }
+  var lastSlide=null;
+  function syncSlide(){ var s=document.querySelector('.slide.on'); if(s===lastSlide)return; lastSlide=s;
+    var sp=curSpot(); if(sp)setFocus(sp,-1); }
+  function go(dir,e){ if(ed())return; var sp=curSpot(); if(!sp)return;
+    var it=spotGroups(sp); if(!it.length)return;
+    var c=parseInt(sp.getAttribute('data-focus'),10); if(isNaN(c))c=-1;
+    if(dir>0&&c<it.length-1){ setFocus(sp,c+1); e.preventDefault(); e.stopImmediatePropagation(); return }
+    if(dir<0&&c>-1){ setFocus(sp,c-1); e.preventDefault(); e.stopImmediatePropagation(); return }
+  }
+  function setup(){ syncSlide();
+    try{new MutationObserver(syncSlide).observe(document.body,{attributes:true,attributeFilter:['class'],subtree:true})}catch(e){}
+    document.addEventListener('keydown',function(e){
+      if(e.ctrlKey||e.metaKey||e.altKey)return;
+      var t=e.target; if(t&&t.tagName&&(/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable))return;
+      var k=e.key;
+      if(k==='ArrowRight'||k==='PageDown'||k===' '||k==='Spacebar')go(1,e);
+      else if(k==='ArrowLeft'||k==='PageUp')go(-1,e);
+    },true);
+    document.addEventListener('click',function(e){
+      var nx=document.getElementById('next'), pv=document.getElementById('prev');
+      var t=e.target;
+      if(nx&&(t===nx||(nx.contains&&nx.contains(t))))go(1,e);
+      else if(pv&&(t===pv||(pv.contains&&pv.contains(t))))go(-1,e);
+    },true);
+  }
+  if(document.readyState!=='loading')setup(); else document.addEventListener('DOMContentLoaded',setup);
+})();</script><div class="__ed_adj" data-adj-i="0" style="display: none;"></div><div class="__ed_adj" data-adj-i="1" style="display: none;"></div><div class="__ed_adj" data-adj-i="2" style="display: none;"></div></body></html>
